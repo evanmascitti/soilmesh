@@ -1,0 +1,6 @@
+^soilmesh\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^data-raw$
+^inst/extdata/mesh004\.ply$
+^LICENSE\.md$

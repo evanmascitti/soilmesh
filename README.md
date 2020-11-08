@@ -17,4 +17,6 @@ This package houses the functions I use for processing 3D meshes in ASI
 because the mesh processing is very specific to my project, and it is
 not likely anyone else would need to use the functions in this package.
 I do plan to publish **diRtscience** on CRAN, so I want to be a good
-curator of that package and keep my niche stuff out of it.
+curator of that package and keep my niche stuff out of it. I plan to add
+more functions for auto-aligning meshes so there is zero point-and-click
+in the pipeline.

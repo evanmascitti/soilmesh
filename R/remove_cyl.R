@@ -15,11 +15,6 @@
 #'
 #' @example inst/examples/remove_cyl_example.r
 remove_cyl <- function(mesh, radius = 70, clip_fun = "default", keep = "inside", ...) {
-  if(radius != 70){
-    if(usethis::ui_yeah(x= "You have specified a cylinder dimension other than the default. Did you mean to do this?", n_yes = 1, n_no = 1, shuffle = FALSE) == FALSE){
-      stop("\nOK you dummy, call the function again without changing the default radius!")
-    }
-  }
 
   boundary_function <- function(m){m[,1]^2 + m[,2]^2}
 

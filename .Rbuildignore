@@ -3,4 +3,5 @@
 ^README\.Rmd$
 ^data-raw$
 ^inst/extdata/mesh004\.ply$
+^inst/extdata/mesh004_w_color_131kfaces\.ply$
 ^LICENSE\.md$

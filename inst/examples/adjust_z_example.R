@@ -1,0 +1,5 @@
+xy_fixed <- remove_cyl(adjust_xy(untrimmed_mesh1))
+z_fixed <- remove_cyl(adjust_z(xy_fixed))
+rgl::shade3d(xy_fixed, alpha=1/2)
+rgl::shade3d(z_fixed)
+add_origin_axes()

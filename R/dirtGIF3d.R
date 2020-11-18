@@ -18,12 +18,12 @@ dirtGIF3d <- function(mesh, output_file, phi= -35, zoom = 0.8,
                   n_snaps = 10, fps = 2, bg_color = "grey60") {
 
   # set the screen size, background, and zoom parameters
-  suppressWarnings(rgl::par3d(r3dDefaults) )
+  suppressWarnings(rgl::par3d(rgl::r3dDefaults) )
   rgl::par3d(windowRect = c(1707, 243, 2364, 900)) # these correspond to my laptop screen
   rgl::bg3d("grey60")
   rgl::rgl.viewpoint(phi = phi, zoom = zoom)
   rgl::rgl.pop("lights")
-  rgl::rgl.light(phi = 60, specular = grey.colors(8) %>% .[2])
+  rgl::rgl.light(phi = 60, specular = grDevices::grey.colors(8) %>% .[2])
 
   # for i in angles, first clear the window, then rotate the original mesh
   # object by i radians, and render it
@@ -32,7 +32,7 @@ dirtGIF3d <- function(mesh, output_file, phi= -35, zoom = 0.8,
 
     rgl::clear3d()
     rgl::rotate3d(obj= mesh,
-                  matrix = rotationMatrix(angle = circular::rad(360*i/n_snaps),
+                  matrix = rgl::rotationMatrix(angle = circular::rad(360*i/n_snaps),
                                           x =0, y=0, z=1) ) %>%
       rgl::shade3d()
 

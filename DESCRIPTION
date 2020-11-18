@@ -1,6 +1,6 @@
 Package: soilmesh
 Title: Processes 3D Meshes Without Headaches
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person(given = "First",
            family = "Last",
@@ -19,7 +19,14 @@ Imports:
     Morpho,
     Rvcg,
     magrittr,
-    lifecycle
+    lifecycle,
+    magick,
+    circular,
+    tibble,
+    dplyr,
+    rlang,
+    stringr,
+    purrr
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle

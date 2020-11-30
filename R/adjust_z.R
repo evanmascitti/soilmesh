@@ -67,7 +67,7 @@ adjust_z <- function(mesh, n_bins= 10000){
   corrected_mesh$vb[3, ] <- corrected_z_coords
 
   if(z_error > 5){
-    rlang::warn(message = "The computed z-error was greater than 5 mm. Did you use `remove_cyl()` to clip the sample holder before computing the z-correction?\nIf the specimen has shrunk substantially, its surface may be somewhat concave but this message may be ignored.")
+    rlang::warn(message = "The computed z-error was greater than 5 mm. Did you use `remove_cyl()` to clip the sample holder before computing the z-correction?\nIf the specimen has shrunk substantially, its surface may be somewhat concave but there is little choice but to ignore this message and assume the change in volume is equal for the portions above and below the planar surface.")
   }
 
   return(corrected_mesh)

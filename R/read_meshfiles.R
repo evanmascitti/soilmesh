@@ -13,7 +13,7 @@
 #'  [`purrr::map()`], and [`Rvcg::vcgImport()`] with specific arguments to
 #'  locate files, import to current session , strip file extensions, and compile
 #'  in tidy format.
-#'
+#' @export
 #'@seealso [`ecmfuns::gather.files()`], [`ecmfuns::read.files()`], [`Rvcg::vcgImport()`]
 
 

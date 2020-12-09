@@ -3,7 +3,7 @@
 #' @description A specific function to automate reading of `.ply` files into R. Specify a
 #' directory containing the files to automatically read all contained `.ply`
 #' files into R and compile them into a nested tibble with one row per file.
-#' Result can be piped to [`parse_mesh_filenames()`] prior to mesh
+#' Result can be piped to [`parse_mesh_filename()`] prior to mesh
 #' processing/analysis.
 #'
 #' @param dir Directory in which to search for `.ply` files

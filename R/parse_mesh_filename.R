@@ -19,7 +19,7 @@
 #'   (i.e. 55) but converted to a decimal after parsing.
 #'   3. `sand_name` Unique
 #'   camelCase character string which identifies the source of sand, i.e.
-#'   "boydMedium"
+#'   "boydMed"
 #'   4. `clay_name` Unique camelCase character string which identifies the
 #'   source of fine-grained soil, i.e. "brownGumbo"
 #'   5. `rep` Replicate ID for a given mix (A-C)
@@ -27,8 +27,9 @@
 #'   (1-n)
 #'   7. `cylinder_ID` The unique number on the aluminum specimen mold used
 #'   for the sample (1-12)
-#'   8. `overall_scan_number` Unique 4-digit
-#'   9. `dttm` Calendar date-time of the scan in POSIX format, i.e.
+#'   8. `overall_scan_number` Unique 4-digit number identifying the scan number
+#'   (of all the scans I make during the experiment)
+#'   9. `date_time` Calendar date-time of the scan in POSIX format, i.e.
 #'   YYYY-MM-DD-HH-MM
 #'
 #' Note that the percent "clay" (i.e. fines) is not included as an element.
@@ -42,14 +43,13 @@
 #'   objects.
 #' @export
 #'
-#' @examples
 parse_mesh_filename <- function(df){
   tidyr::separate(
     data = df,
     col = .data$mesh_file_name,
-    into = c("inf_mix_number", "sand_pct", "sand_name", "clay_name", "rep", "run", "cylinder_ID", "overall_scan_number", "dttm"),
+    into = c("inf_mix_number", "sand_pct", "sand_name", "clay_name", "rep", "run", "cylinder_ID", "overall_scan_number", "date_time"),
     sep = "_",
     convert = TRUE
   ) %>%
-    mutate(sand_pct = sand_pct / 100)
+    dplyr::mutate(sand_pct = .data$sand_pct / 100)
 }

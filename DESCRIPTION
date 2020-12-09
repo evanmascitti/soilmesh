@@ -26,7 +26,8 @@ Imports:
     dplyr,
     rlang,
     stringr,
-    purrr
+    purrr,
+    tidyr
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle

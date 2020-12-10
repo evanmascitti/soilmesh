@@ -46,7 +46,7 @@
 parse_mesh_filename <- function(df){
   tidyr::separate(
     data = df,
-    col = .data$mesh_file_name,
+    col = .data$mesh_file_basename,
     into = c("inf_mix_number", "sand_pct", "sand_name", "clay_name", "rep", "run", "cylinder_ID", "overall_scan_number", "date_time"),
     sep = "_",
     convert = TRUE

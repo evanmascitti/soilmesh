@@ -4,7 +4,7 @@
 \alias{vol_above}
 \title{Compute disturbed soil volume \strong{above} original surface plane}
 \usage{
-vol_above(mesh, show = TRUE)
+vol_above(mesh, show = FALSE)
 }
 \arguments{
 \item{mesh}{triangular mesh of class "mesh3d"}

@@ -13,7 +13,7 @@
 #' @importFrom magrittr `%T>%`
 #' @seealso [`vol_above()`], [`vol_below()`]
 #' @export
-vol_below <- function(mesh, show = TRUE){
+vol_below <- function(mesh, show = FALSE){
 
   # slice the mesh along the x-y plane and keep only what's above
   # use the rounded ref circle as the base
@@ -25,10 +25,11 @@ vol_below <- function(mesh, show = TRUE){
                          v3= c(-1,0,0),
                          keep.upper = FALSE) %>%
     Rvcg::vcgBallPivoting() %>%
-    Rvcg::vcgClean(sel = c(0, 6)) %>%
+    Rvcg::vcgClean(sel = c(0:6)) %>%
     soilmesh::remove_cyl() %>%
     rgl::shade3d %T>%
-    Rvcg::vcgClean(sel = c(0, 6), iterate = T)
+    Rvcg::vcgClean(sel = c(0:6), iterate = T) %>%
+    Rvcg::vcgVolume()
   }
 
   if(show == FALSE){
@@ -38,9 +39,10 @@ vol_below <- function(mesh, show = TRUE){
                            v3= c(-1,0,0),
                            keep.upper = FALSE) %>%
       Rvcg::vcgBallPivoting() %>%
-      Rvcg::vcgClean(sel = c(0, 6)) %>%
+      Rvcg::vcgClean(sel = c(0:6)) %>%
       soilmesh::remove_cyl() %>%
-      Rvcg::vcgClean(sel = c(0, 6), iterate = T)
+      Rvcg::vcgClean(sel = c(0:6), iterate = T) %>%
+      Rvcg::vcgVolume()
   }
 
 }

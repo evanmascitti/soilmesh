@@ -5,11 +5,11 @@
 
 <!-- badges: start -->
 
-![packageversion](https://img.shields.io/badge/Package%20version-0.0.0.9000-orange.svg?style=flat-square)
+![packageversion](https://img.shields.io/badge/Package%20version-0.0.0.9002-orange.svg?style=flat-square)
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2020--11--07-yellowgreen.svg)](/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2020--12--22-yellowgreen.svg)](/commits/master)
 <!-- badges: end -->
 
 This package houses the functions I use for processing 3D meshes in ASI

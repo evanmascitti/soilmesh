@@ -1,13 +1,13 @@
 Package: soilmesh
 Title: Processes 3D Meshes Without Headaches
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Evan",
+           family = "Mascitti",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "evanmascitti@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: Special functions for manipulating 3D meshes and deriving metrics from their geometry. Written for author's PhD project on engineered infield soils for baseball and softball fields.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

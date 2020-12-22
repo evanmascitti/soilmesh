@@ -10,7 +10,7 @@ vol_total(mesh)
 \item{mesh}{triangular mesh of class "mesh3d"}
 }
 \value{
-volume of soil disturbed during the test in mm3
+volume of soil disturbed during the test in cm3
 }
 \description{
 Makes internal calls to \code{\link[=vol_below]{vol_below()}} and \code{\link[=vol_above]{vol_above()}} and

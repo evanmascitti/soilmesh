@@ -2,26 +2,40 @@
 % Please edit documentation in R/vol_below.R
 \name{vol_below}
 \alias{vol_below}
-\title{Compute disturbed soil volume \strong{below} original surface plane}
+\title{Calculate soil volume below a reference plane}
 \usage{
-vol_below(mesh, show = FALSE)
+vol_below(mesh, z_displ_mm = 0.01, ball_radius_mm = 0.005)
 }
 \arguments{
 \item{mesh}{triangular mesh of class "mesh3d"}
 
-\item{show}{whether to display the sliced mesh in a new \strong{rgl} window.}
+\item{z_displ_mm}{vertical offset to prevent removal of vertices near the origin}
+
+\item{ball_radius_mm}{radius in mm for the ball-pivoting mesh reconstruction}
 }
 \value{
-mesh volume in mm3
+numeric vector of length 1, representing the cm3 of soil
+residing above the reference plane
 }
 \description{
-Slice the mesh at the z=0 plane and keep only points at or above
-the plane. Then merge it with the reference plane of the same diameter.
-Compute the volume in mm3.
+One half of the total volume computation.
 }
 \details{
 \lifecycle{experimental}
+
+This applies a sort of hack to slice the mesh and keep only points
+residing above the x-y plane. The "hack" portion is translating the
+actual reference plane away from the mesh by a very small distance. So long
+as the ball radius is smaller than this distance, one can be confident that
+the reference plane will be preserved as part of the new mesh. The volume
+attributable to the offset is subtracted before completing the calculation.
+The meshes used in this project can \emph{never} be "watertight" and it is my
+hope that so long as the mesh is 2-manifold, the volume computation is
+accurate. This function calls \code{\link[Rvcg:vcgClean]{Rvcg::vcgClean()}} to remove non-manifold
+faces, then remove unreferenced vertices, and (finally) remove non-manifold
+vertices. This approach seems to resolve the non-manifoldness of the meshes
+induced by downsampling, cylinder removal, and top/bottom removal.
 }
 \seealso{
-\code{\link[=vol_above]{vol_above()}}, \code{\link[=vol_below]{vol_below()}}
+\code{\link[=vol_above]{vol_above()}}
 }

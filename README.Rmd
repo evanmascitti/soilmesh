@@ -21,12 +21,12 @@ version <- as.vector(read.dcf('DESCRIPTION')[, 'Version'])
 version <- gsub('-', '.', version)
 ```
 ![packageversion](https://img.shields.io/badge/Package%20version-`r version`-orange.svg?style=flat-square)
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-yellowgreen.svg)](/commits/master)
 <!-- badges: end -->
 
-This package houses the functions I use for processing 3D meshes in ASI 468. As of 2020-11-07 it holds a single function for clipping meshes to just the soil surface. 
+This package houses the functions I use for processing 3D meshes in ASI 468.
 
-I plan to add additional functions for auto-aligning meshes and analyzing their geometry. THe goal is for there to be zero point-and-click in the pipeline; this ensures complete reproducibility of my analyses. 
+Rather than using point-and-click software (such as [MeshLab](https://www.meshlab.net/)), this approach is buit on top of other R packages and is done entirely with code. This ensures complete reproducibility of my analyses and eliminates possible human errors, which are hard to detect and trace. 
 
-This package has been kept separate from that in **diRtscience** because the mesh processing methods are very specific to my project, and it is not likely anyone else would need to use the functions residing in **soilmesh**. I do plan to publish **diRtscience** on CRAN, so I want to be a good curator of that package and keep my niche stuff out of it. 
+This package has been kept separate from the functions in **diRtscience** because the mesh processing methods are very specific to my project, and it is not likely anyone else would need to use the functions residing in **soilmesh**. I do plan to publish **diRtscience** on CRAN (with a better name), so I want to be a good curator of that package and keep my niche stuff out of it. 

@@ -1,6 +1,6 @@
 Package: soilmesh
 Title: Processes 3D Meshes Without Headaches
-Version: 0.0.0.9002
+Version: 0.0.0.9003
 Authors@R: 
     person(given = "Evan",
            family = "Mascitti",
@@ -27,7 +27,9 @@ Imports:
     rlang,
     stringr,
     purrr,
-    tidyr
+    tidyr,
+    crayon,
+    readr
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle

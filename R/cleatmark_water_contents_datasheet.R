@@ -2,7 +2,7 @@
 #'   device
 #'
 #' @description Ensures consistent column names and rectangular format across
-#'   days and soils.
+#'   days and soils. Records information needed to calculate water content at two sampling times.
 #'
 #' @details This format allows a water content sample to be extracted at the
 #'   beginning of the dry-down process and a second sample to be extracted
@@ -14,14 +14,15 @@
 #'   beginning of the test.
 #'
 #'
-#' @param soil_IDs character vector of the unique identifiers of the soils being tested (length 4)
+#' @param soil_IDs character vector of the unique identifiers of the soils being
+#'   tested (length 4)
 #' @param date quoted date of data collection, in yyyy-mm-dd format
 #' @param dir directory in which to save the .csv file (no trailing slash)
 #'
 #' @return File is written to disk and a message is printed in the console.
 #' @export
 #'
-generate_mesh_metadata_file <- function(soil_IDs, date, dir){
+cleatmark_water_contents_file <- function(soil_IDs, date, dir){
 
   data_tibble <- tibble::tibble(
     soil_ID = rep(rep(soil_IDs, each = 3), times=2),
@@ -29,9 +30,13 @@ generate_mesh_metadata_file <- function(soil_IDs, date, dir){
     date = date,
     time_type = rep(c("lamp_on", "test_time"), each=12),
     time = "",
+    tin_tare_set = "",
     tin_number = "",
     tin_w_wet_sample= "",
     tin_w_OD_sample = "",
+    sand_cup_mass_before_filling_g = "-",
+    sand_cup_mass_after_filling_g = "-",
+    OD_soil_mass_above_ref_plane = "-",
     comments = "-"
     )
 

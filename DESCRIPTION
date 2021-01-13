@@ -1,6 +1,6 @@
 Package: soilmesh
 Title: Processes 3D Meshes Without Headaches
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Authors@R: 
     person(given = "Evan",
            family = "Mascitti",

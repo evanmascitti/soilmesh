@@ -22,7 +22,7 @@
 #' @return File is written to disk and a message is printed in the console.
 #' @export
 #'
-cleatmark_water_contents_file <- function(soil_IDs, date, dir){
+cleatmark_water_contents_datasheet <- function(soil_IDs, date, dir){
 
   data_tibble <- tibble::tibble(
     soil_ID = rep(rep(soil_IDs, each = 3), times=2),
@@ -42,7 +42,7 @@ cleatmark_water_contents_file <- function(soil_IDs, date, dir){
 
 
   data_tibble %>%
-    readr::write_csv(file = paste0(dir, "/", date, "_cleatmark_w_conts_and_metadata.csv") )
+    readr::write_csv(file = paste0(dir, "/", date, "_cleatmark_w_conts_and_test_times.csv") )
 
   message(crayon::green('Please verify that the file was correctly written to disk.'))
 }

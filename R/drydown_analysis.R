@@ -43,38 +43,41 @@ drydown_analysis <- function(path){
   # compute the time changes for each cylinder
 
   time_changes  <- raw_data %>%
-    dplyr::select(-c(.data$date, .data$time, .data$tin_tare_set, .data$tin_number,
+    dplyr::select(-c(.data$time, .data$tin_tare_set, .data$tin_number,
                      .data$tin_w_wet_sample, .data$tin_w_OD_sample))%>%
     tidyr::pivot_wider(names_from = .data$time_type, values_from = .data$date_time) %>%
     dplyr::mutate(drydown_time = lubridate::as.duration(.data$test_time - .data$lamp_on)) %>%
-    dplyr::select(.data$soil_ID, .data$cylinder_ID, .data$drydown_time)
+    dplyr::select(.data$date, .data$soil_ID, .data$cylinder_ID, .data$drydown_time)
 
 
   # compute water content loss for each cylinder
 
   water_losses <- suppressMessages(
     raw_data %>%
-    dplyr::select(-c(.data$date, .data$time)) %>%
     dplyr::left_join(asi468::tin_tares[[tin_tare_date]]) %>%
     soiltestr::add_w() %>%
-    dplyr::select(.data$soil_ID, .data$cylinder_ID, .data$time_type, .data$water_content) %>%
+    dplyr::select(.data$date, .data$soil_ID, .data$cylinder_ID, .data$time_type, .data$water_content) %>%
     tidyr::pivot_wider(names_from = .data$time_type,
                 values_from = .data$water_content) %>%
     dplyr::mutate(w_loss_total = .data$lamp_on - .data$test_time) %>%
     dplyr::left_join(time_changes) %>%
     dplyr::mutate(w_loss_per_hr = .data$w_loss_total / lubridate::time_length(.data$drydown_time, unit = "hours")) %>%
-    dplyr::select(.data$soil_ID, .data$cylinder_ID, .data$drydown_time,
-                  .data$w_loss_total, .data$w_loss_per_hr)
+    dplyr::select(.data$date, .data$soil_ID, .data$cylinder_ID, .data$drydown_time,
+                  .data$w_loss_total, .data$w_loss_per_hr) %>%
+    dplyr::ungroup()
   )
+
 
 
   # compute a summary for each soil
 
-    water_losses_summary <- water_losses %>%
-    dplyr::group_by(.data$soil_ID) %>%
+    water_losses_summary <- suppressMessages(
+      water_losses %>%
+    dplyr::group_by(.data$date, .data$soil_ID) %>%
     dplyr::summarise(avg_w_loss_total = mean(.data$w_loss_total, na.rm = T),
                      avg_w_loss_per_hr = mean(.data$w_loss_per_hr, na.rm = T)) %>%
     dplyr::ungroup()
+    )
 
 
 

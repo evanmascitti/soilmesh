@@ -23,7 +23,7 @@ records, and the resulting tibble can be used for anaysis with
 \strong{tidyverse} tools.
 }
 \details{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 Each file name contains 9 pieces of information, separated by
 underscores. They are (in order of appearance):

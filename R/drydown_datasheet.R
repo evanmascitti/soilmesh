@@ -11,18 +11,18 @@
 #'   function of water content, this is still a useful data point for estimating
 #'   evaporation rate, and also because it allows a check to be performed on the
 #'   uniformity of water content across cylinders of the same soil at the
-#'   beginning of the test.
+#'   beginning of the test. See [`drydown_analysis()`].
 #'
 #'
 #' @param soil_IDs character vector of the unique identifiers of the soils being
 #'   tested (length 4)
-#' @param date quoted date of data collection, in yyyy-mm-dd format
-#' @param dir directory in which to save the .csv file (no trailing slash)
+#' @param date date of data collection ("yyyy-mm-dd")
+#' @param dir directory in which to save the .csv file
 #'
 #' @return File is written to disk and a message is printed in the console.
 #' @export
 #'
-cleatmark_water_contents_datasheet <- function(soil_IDs, date, dir){
+drydown_datasheet <- function(soil_IDs, date, dir){
 
   data_tibble <- tibble::tibble(
     soil_ID = rep(rep(soil_IDs, each = 3), times=2),
@@ -30,19 +30,21 @@ cleatmark_water_contents_datasheet <- function(soil_IDs, date, dir){
     date = date,
     time_type = rep(c("lamp_on", "test_time"), each=12),
     time = "",
+    AM_PM = "",
     tin_tare_set = "",
     tin_number = "",
     tin_w_wet_sample= "",
     tin_w_OD_sample = "",
-    sand_cup_mass_before_filling_g = "-",
-    sand_cup_mass_after_filling_g = "-",
-    OD_soil_mass_above_ref_plane = "-",
     comments = "-"
     )
 
+  if(stringr::str_sub(dir, start = -1) == "/"){
+    outfile <- paste0(dir, date, "_drydown_data.csv") } else{
+      outfile <- paste0(dir, "/", date, "_drydown_data.csv")
+    }
 
   data_tibble %>%
-    readr::write_csv(file = paste0(dir, "/", date, "_cleatmark_w_conts-test_times-phys_vols.csv") )
+    readr::write_csv(file = outfile)
 
   message(crayon::green('Please verify that the file was correctly written to disk.'))
 }

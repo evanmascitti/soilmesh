@@ -29,7 +29,15 @@ Imports:
     purrr,
     tidyr,
     crayon,
-    readr
+    readr,
+    ggplot2,
+    asi468,
+    colorblindr,
+    cowplot,
+    lubridate,
+    ggrepel,
+    scales,
+    soiltestr
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle

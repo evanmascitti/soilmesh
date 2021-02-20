@@ -1,0 +1,18 @@
+---
+title: "Cleat-mark device data report"
+author: "Evan C. Mascitti"
+date: "Report compiled `r strftime(Sys.time(), format = '%a %e %b, %Y %I:%M %p')`"
+output: soilmesh::cleat_mark_daily_report
+params: test_date
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Summary of tests
+
+```{r}
+test_summary <- readr::read_csv()
+```
+

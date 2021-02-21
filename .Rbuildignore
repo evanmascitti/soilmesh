@@ -5,5 +5,6 @@
 ^inst/extdata/mesh004\.ply$
 ^inst/extdata/mesh004_w_color_131kfaces\.ply$
 ^LICENSE\.md$
-^pseudocode_for_daily_skeleton_chunk_analysis_Rmd_report.md$
+^pseudocode_for_daily_skeleton_chunk_analysis_Rmd_report*.
 ^inst/daily_report_development*.
+

@@ -1,3 +1,7 @@
+---
+title: Automated report with exploratory data analysis of chunk tests
+---
+
 # Processing 
 
 First, process the meshes and save them for later. This means I won't have to run long scripts every time I want to do a quick analysis. 
@@ -11,7 +15,8 @@ This should be considered part of data collection, not part of the data analysis
 - create vector of new file names
 - re-write the meshes into the derived data directory 
 
-Update: as of 2021-02-21 the `batch_process_mesh()` function does everything above besides the downsampling.
+[**Update:**] as of 2021-02-21 the `batch_process_mesh()` function does everything above besides the downsampling.
+
 ___
 
 # For the dily Rmd report/analysis 
@@ -33,7 +38,9 @@ ___
     - DNE
 - snapshot images of each mesh, labeled by cylinder, mix, and water content 
 
+
 ___
+
 
 
 # Create a separate report which updates using all the current data collected on this set of mixtures 

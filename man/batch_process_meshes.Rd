@@ -8,21 +8,38 @@ batch_process_meshes(
   input_directory,
   output_directory,
   rtmatrix = NULL,
+  ...,
+  downsample = TRUE,
   overwrite = FALSE
 )
 }
 \arguments{
-\item{input_directory}{path to a directory containing one or more \code{.ply} files}
+\item{input_directory}{path to a directory containing one or more \code{.ply}
+files}
 
-\item{output_directory}{path to a directory where the new files will be written}
+\item{output_directory}{path to a directory where the new files will be
+written}
 
-\item{rtmatrix}{character string corresponding to one of the 4x4 matrices from the elements of \code{\link[=rtmatrices]{rtmatrices()}}}
+\item{rtmatrix}{a 4x4 matrix. Normally supplied by passing a character string
+corresponding to one of the YYYY-MM-DD dates in the \code{soiltestr::rtmatrices}
+data object. Alternatively, pass a matrix either from the aforementioned
+data object or a matrix present as a variable in the existing global
+environment. \code{\link[=rtmatrices]{rtmatrices()}}}
 
-\item{overwrite}{whether to over-write existing files in the target directory (if they have identical names)}
+\item{...}{Other arguments passed to \code{\link[Rvcg:vcgQEdecim]{Rvcg::vcgQEdecim()}} (usually either
+\code{tarface} for a set number of faces or \code{percent} for a percentage of
+original face number (numeric, 0-1). Ignored if \code{downsample = TRUE}}
+
+\item{downsample}{Whether to reduce the number of faces by calling
+\code{\link[Rvcg:vcgQEdecim]{Rvcg::vcgQEdecim()}}}
+
+\item{overwrite}{whether to over-write existing files in the target directory
+(if they have identical names)}
 }
 \value{
 Writes files to disk and prints a message
 }
 \description{
-This function automates a process that I do repeatedly after collecting 3D scans.
+This function automates a process that I do repeatedly after
+collecting 3D scans.
 }

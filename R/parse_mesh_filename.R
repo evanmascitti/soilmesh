@@ -3,53 +3,43 @@
 #' @title Split the base file name of a mesh scan into atomic idenifiers
 #'
 #' @description A file naming sheme was developed for this project to ensure all
-#'   data files are uniquely identified. Each `.ply` file has a unique
-#'   identifier containing 9 sepearate pieces of information (see Details). This
-#'   function parses the file name into useful metadata about the specimen it
-#'   records, and the resulting tibble can be used for anaysis with
-#'   **tidyverse** tools.
+#'   data files are uniquely identified. Each `.ply` file contains 4 pieces of
+#'   information (see details). This function parses the file name into useful
+#'   metadata about the specimen. Returns a tibble for use subsequent analysis
+#'   with **tidyverse** tools.
 #'
-#' @details Each file name contains 9 pieces of information, separated by
-#'   underscores. They are (in order of appearance):
+#' @details Each file name contains 4 pieces of information, separated by
+#'   underscores. These provide enough information to uniquely idenfify every
+#'   scan, and the additional information about the soil can be added via
+#'   joining other data frames. The pieces of information encoded in the file
+#'   names are (in order of appearance):
 #'
-#'   1. `inf_mix_number` Overall 3-digit mix number for the main series of
-#'   experiments
-#'   2. `sand_pct` Percent sand-size particles (i.e. > 53 &mu; sieve
-#'   diameter) by oven-dry mass (two digits). Encoded in file name as a percent
-#'   (i.e. 55) but converted to a decimal after parsing.
-#'   3. `sand_name` Unique
-#'   camelCase character string which identifies the source of sand, i.e.
-#'   "boydMed"
-#'   4. `clay_name` Unique camelCase character string which identifies the
-#'   source of fine-grained soil, i.e. "brownGumbo"
-#'   5. `rep` Replicate ID for a given mix (A-C)
-#'   6. `run` Successive date of testing
-#'   (1-n)
-#'   7. `cylinder_ID` The unique number on the aluminum specimen mold used
-#'   for the sample (1-12)
-#'   8. `overall_scan_number` Unique 4-digit number identifying the scan number
-#'   (of all the scans I make during the experiment)
-#'   9. `date_time` Calendar date-time of the scan in POSIX format, i.e.
-#'   YYYY-MM-DD-HH-MM
+#'   1. `experiment_ID`: A two-digit identifier or a character string
+#'   corresponding to the particular set of mixes or task. 2. `soil_ID` 3-digit
+#'   number or other character string identifying the soil _within_ the
+#'   experiment 3. `date` Calendar date of the scan in POSIX format, i.e.
+#'   YYYY-MM-DD 4. `cylinder_ID` The aluminum sample holder containing the
+#'   specimen of interest
 #'
-#' Note that the percent "clay" (i.e. fines) is not included as an element.
-#' Including this value would be redundant because its value is implicitly
-#' encoded by the sand %; the "clay %" i.e.  is simply 1 - sand_pct.
 #'
-#' @param df Data frame containing two columns, 'mesh_file_name', and 'ply_file'
+#' @param x Character vector of `.ply` files to read
 #'
-#' @return Data frame containing 11 columns, 10 of which are information about
-#'   the scanned specimen and 1 of which is a list-column holding the `"mesh3d'`
-#'   objects.
+#' @return Data frame containing 5 columns; the first holds the full file path
+#' while the rest hold the data which uniquely identify the file (See details)
 #' @export
 #'
-parse_mesh_filename <- function(df){
+parse_mesh_filename <- function(x){
+  tibble::tibble(old_path = x,
+                 sans_extension = stringr::str_remove(string = basename(.data$old_path),
+                                                      pattern = "[.]ply$")) %>%
   tidyr::separate(
-    data = df,
-    col = .data$mesh_file_basename,
-    into = c("inf_mix_number", "sand_pct", "sand_name", "clay_name", "rep", "run", "cylinder_ID", "overall_scan_number", "date_time"),
+    col = .data$sans_extension,
+    into = c("experiment_ID", "soil_ID", "date", "cylinder_ID"),
     sep = "_",
-    convert = TRUE
+    convert = FALSE,
+    remove = TRUE
   ) %>%
-    dplyr::mutate(sand_pct = .data$sand_pct / 100)
+    dplyr::mutate(cylinder_ID = stringr::str_remove(string = .data$cylinder_ID,
+                                                    pattern = "cyl")
+    )
 }

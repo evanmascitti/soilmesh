@@ -1,6 +1,6 @@
 Package: soilmesh
 Title: Processes 3D Meshes Without Headaches
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: 
     person(given = "Evan",
            family = "Mascitti",
@@ -14,14 +14,10 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
-    usethis,
     rgl,
     Morpho,
     Rvcg,
     magrittr,
-    lifecycle,
-    magick,
-    circular,
     tibble,
     dplyr,
     rlang,
@@ -31,13 +27,17 @@ Imports:
     crayon,
     readr,
     ggplot2,
-    asi468,
-    colorblindr,
     cowplot,
     lubridate,
-    ggrepel,
     scales,
-    soiltestr
+    soiltestr,
+    lifecycle
+Suggests: 
+    colorblindr,
+    circular,
+    magick,
+    ggrepel,
+    asi468
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle

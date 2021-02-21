@@ -17,9 +17,25 @@
 #' @export
 #'
 #' @example inst/examples/drydown_analysis_example.R
+#'
 drydown_analysis <- function(path){
 
+  if(!requireNamespace("colorblindr")){
+    stop("This function requires package `colorblindr`. `colorblindr` also requires the development versions of `cowplot` and `colorspace`.
+         See instructions at https://github.com/clauswilke/colorblindr")
+  }
+
+  if(!requireNamespace("ggrepel")){
+    stop("This function requires the `ggrepel` package. Please install it.")
+  }
+
+  if(!requireNamespace("asi468")){
+    stop("This function requires the `asi468` package. Please install it.")
+  }
+
   #browser()
+
+
   # read raw file
   # specify that cells containing a single dash should be treated as NA values
   # then construct a date time object from the date and time

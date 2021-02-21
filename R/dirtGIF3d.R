@@ -17,6 +17,14 @@
 dirtGIF3d <- function(mesh, output_file, phi= -35, zoom = 0.8,
                   n_snaps = 10, fps = 2, bg_color = "grey60") {
 
+  if(!requireNamespace("circular")){
+    stop("\nThis function requires the `circular` package, please install it.")
+  }
+
+  if(!requireNamespace("magick")){
+    stop("\nThis function requires the `magick` package, please install it.")
+  }
+
   # set the screen size, background, and zoom parameters
   suppressWarnings(rgl::par3d(rgl::r3dDefaults) )
   rgl::par3d(windowRect = c(1707, 243, 2364, 900)) # these correspond to my laptop screen

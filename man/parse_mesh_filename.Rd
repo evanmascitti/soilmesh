@@ -4,52 +4,36 @@
 \alias{parse_mesh_filename}
 \title{Split the base file name of a mesh scan into atomic idenifiers}
 \usage{
-parse_mesh_filename(df)
+parse_mesh_filename(x)
 }
 \arguments{
-\item{df}{Data frame containing two columns, 'mesh_file_name', and 'ply_file'}
+\item{x}{Character vector of \code{.ply} files to read}
 }
 \value{
-Data frame containing 11 columns, 10 of which are information about
-the scanned specimen and 1 of which is a list-column holding the \verb{"mesh3d'}
-objects.
+Data frame containing 5 columns; the first holds the full file path
+while the rest hold the data which uniquely identify the file (See details)
 }
 \description{
 A file naming sheme was developed for this project to ensure all
-data files are uniquely identified. Each \code{.ply} file has a unique
-identifier containing 9 sepearate pieces of information (see Details). This
-function parses the file name into useful metadata about the specimen it
-records, and the resulting tibble can be used for anaysis with
-\strong{tidyverse} tools.
+data files are uniquely identified. Each \code{.ply} file contains 4 pieces of
+information (see details). This function parses the file name into useful
+metadata about the specimen. Returns a tibble for use subsequent analysis
+with \strong{tidyverse} tools.
 }
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-Each file name contains 9 pieces of information, separated by
-underscores. They are (in order of appearance):
+Each file name contains 4 pieces of information, separated by
+underscores. These provide enough information to uniquely idenfify every
+scan, and the additional information about the soil can be added via
+joining other data frames. The pieces of information encoded in the file
+names are (in order of appearance):
 \enumerate{
-\item \code{inf_mix_number} Overall 3-digit mix number for the main series of
-experiments
-\item \code{sand_pct} Percent sand-size particles (i.e. > 53 μ sieve
-diameter) by oven-dry mass (two digits). Encoded in file name as a percent
-(i.e. 55) but converted to a decimal after parsing.
-\item \code{sand_name} Unique
-camelCase character string which identifies the source of sand, i.e.
-"boydMed"
-\item \code{clay_name} Unique camelCase character string which identifies the
-source of fine-grained soil, i.e. "brownGumbo"
-\item \code{rep} Replicate ID for a given mix (A-C)
-\item \code{run} Successive date of testing
-(1-n)
-\item \code{cylinder_ID} The unique number on the aluminum specimen mold used
-for the sample (1-12)
-\item \code{overall_scan_number} Unique 4-digit number identifying the scan number
-(of all the scans I make during the experiment)
-\item \code{date_time} Calendar date-time of the scan in POSIX format, i.e.
-YYYY-MM-DD-HH-MM
+\item \code{experiment_ID}: A two-digit identifier or a character string
+corresponding to the particular set of mixes or task. 2. \code{soil_ID} 3-digit
+number or other character string identifying the soil \emph{within} the
+experiment 3. \code{date} Calendar date of the scan in POSIX format, i.e.
+YYYY-MM-DD 4. \code{cylinder_ID} The aluminum sample holder containing the
+specimen of interest
 }
-
-Note that the percent "clay" (i.e. fines) is not included as an element.
-Including this value would be redundant because its value is implicitly
-encoded by the sand \%; the "clay \%" i.e.  is simply 1 - sand_pct.
 }

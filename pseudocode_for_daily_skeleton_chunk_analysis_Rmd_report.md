@@ -15,7 +15,7 @@ This should be considered part of data collection, not part of the data analysis
 - create vector of new file names
 - re-write the meshes into the derived data directory 
 
-[**Update:**] as of 2021-02-21 the `batch_process_mesh()` function does everything above besides the downsampling.
+[**Update:**] as of 2021-02-21 the `batch_process_mesh()` function does everything above including optional downsampling.
 
 ___
 

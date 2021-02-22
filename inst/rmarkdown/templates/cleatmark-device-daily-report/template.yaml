@@ -1,4 +1,4 @@
 name: Cleatmark device daily report
 description: >
-   Exploratory data analysis which can be generated after each day of data collection
+   Exploratory data analysis generated after one or more days of data collection
 create_dir: FALSE

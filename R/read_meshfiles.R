@@ -23,9 +23,9 @@ read_meshfiles <- function(dir = NULL, ...) {
     stop("\nNo directory specified, please indicate where the `.ply` files are stored.")
   }
 
-  paths <- list.files(path= dir, pattern = ".ply", recursive = FALSE, full.names = TRUE)
+  paths <- list.files(path= dir, pattern = "[.]ply$", recursive = FALSE, full.names = TRUE)
 
-  file_names <- stringr::str_remove(string = basename(paths), pattern = ".ply")
+  file_names <- stringr::str_remove(string = basename(paths), pattern = "[.]ply$")
 
   if(length(paths) == 0){
     stop("No .ply files found in directory, did you search in the correct place?")

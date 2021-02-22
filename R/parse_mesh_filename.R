@@ -9,7 +9,7 @@
 #'   with **tidyverse** tools.
 #'
 #' @details Each file name contains 4 pieces of information, separated by
-#'   underscores. These provide enough information to uniquely idenfify every
+#'   underscores. These provide enough information to uniquely identify every
 #'   scan, and the additional information about the soil can be added via
 #'   joining other data frames. The pieces of information encoded in the file
 #'   names are (in order of appearance):

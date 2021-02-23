@@ -21,7 +21,7 @@ dirtGIF3d(
 
 \item{phi}{vertical observer angle, see \link[rgl]{rgl.viewpoint}}
 
-\item{zoom}{zooming factor, larger number is smaller object. Defaults to 0.4.}
+\item{zoom}{zooming factor, larger number is smaller object. Defaults to 0.8.}
 
 \item{n_snaps}{number of snapshots to concatenate}
 

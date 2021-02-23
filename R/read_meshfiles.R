@@ -1,42 +1,35 @@
 #' @title Read multiple 3D mesh files
 #'
-#' @description A specific function to automate reading of `.ply` files into R. Specify a
-#' directory containing the files to automatically read all contained `.ply`
-#' files into R and compile them into a nested tibble with one row per file.
-#' Result can be piped to [`parse_mesh_filename()`] prior to mesh
-#' processing/analysis.
+#' @description A wrapper to automate reading of `.ply` files into R. Specify a
+#'   character vector of file paths which are compiled into a nested tibble with
+#'   one row per file. The names of the files are parsed with
+#'   [`parse_mesh_filename()`] to include the minimum amount of information
+#'   required to uniquely identify the mesh. Other data such as water content
+#'   can be added via joins to other data frames.
+#'   )
 #'
-#' @param dir Directory in which to search for `.ply` files
+#' @param x character vector of paths pointing to .ply files
+#' @param colors whether to read mesh colors (defaults to TRUE)
 #' @param ... additional arguments passed to [`Rvcg::vcgImport()`]
-#'
-#'@details Wraps [`list.files()`] from base R, [`stringr::str_remove()`],
-#'  [`purrr::map()`], and [`Rvcg::vcgImport()`] with specific arguments to
-#'  locate files, import to current session , strip file extensions, and compile
-#'  in tidy format.
 #' @export
-#'@seealso [`ecmfuns::gather.files()`], [`ecmfuns::read.files()`], [`Rvcg::vcgImport()`]
+#' @seealso [`Rvcg::vcgImport()`], [`parse_mesh_filename()`]
 
 
-read_meshfiles <- function(dir = NULL, ...) {
+read_meshfiles <- function(x, colors = TRUE, ...) {
 
-  if(missing(dir)){
-    stop("\nNo directory specified, please indicate where the `.ply` files are stored.")
-  }
+  meshes <- soilmesh::parse_mesh_filename(x) %>%
+    dplyr::group_by(.data$full_path) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(
+      mesh_object = purrr::map(
+        .x = .data$full_path,
+        .f = Rvcg::vcgImport,
+        readcolor = TRUE)
+    ) %>%
+    dplyr::ungroup() %>%
+    tidyr::unnest(.data$data) %>%
+    dplyr::select(-.data$full_path)
 
-  paths <- list.files(path= dir, pattern = "[.]ply$", recursive = FALSE, full.names = TRUE)
-
-  file_names <- stringr::str_remove(string = basename(paths), pattern = "[.]ply$")
-
-  if(length(paths) == 0){
-    stop("No .ply files found in directory, did you search in the correct place?")
-  }
-
-  ply_files <-purrr::map(
-    .x= paths,
-    .f= ~Rvcg::vcgImport(...) ) %>%
-    purrr::set_names(nm = file_names) %>%
-    tibble::enframe(name = "mesh_file_basename", value= "mesh_object")
-
-  return(ply_files)
+  return(meshes)
 
 }

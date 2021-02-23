@@ -3,10 +3,14 @@ title: "Cleat-mark device data report"
 author: "Evan C. Mascitti"
 date: "Report compiled `r strftime(Sys.time(), format = '%a %e %b %Y, %I:%M %p')`"
 params: 
-  test_dates: !r lubridate::as_date(lubridate::today()) - 1
-  
+  test_dates: ["2021-02-21", "2021-02-22"]
 output:
-  pdf_document_2:
+  bookdown::html_document2:
+    number_sections: false
+    css: "basic_sans_theme.css"
+########################################################################
+  bookdown::pdf_document2:
+    number_sections: false
     latex_engine: xelatex
     mainfont: Arial
     mathfont: Fira Math Regular
@@ -20,31 +24,50 @@ output:
     toccolor: blue
     includes:
       in_header: "preamble.tex"
-  html_document_2():
-    css: "basic_sans_theme.css"
+  
 
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(include = F)
 
 # set the working directory for the code chunks to the project directory rather than 
-# the directory in which the Rmd document is housed. 
-knitr::opts_knit$set(root.dir = '/tmp')
+# the directory in which the Rmd document is housed.
+
+# Don't print any messages, warnings, or code.
+
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file(),
+                     echo = FALSE, 
+                     message = FALSE, 
+                     warning = FALSE)
+
+xfun::pkg_attach(c("tidyverse", "rgl"))
+
 ```
 
 ## Summary of tests
 
 ```{r}
 test_dates <- params$test_dates
+
 ```
 
 ```{r read-raw-data}
-mesh_directories <- paste0(here::here("data", "derived_data", "processed_meshes/"), test_dates)
 
-# function to read mesh files into current R session and enframe them 
+mesh_directories <- paste0(here::here("analysis", "data", "derived_data", "processed_meshes"), "/", test_dates, "_processed_meshes")
+
+mesh_file_paths <- purrr::map(.x = mesh_directories, .f = ~list.files(path = ., pattern = "[.]ply$", full.names = T)) %>% 
+  purrr::reduce(.x = ., .f = c)
+
+# read mesh files into current R session and enframe them in a tibble
+
+meshes <- mesh_file_paths %>% 
+  soilmesh::read_meshfiles()
 
 
+```
+
+
+```{r}
 
 ```
 
@@ -66,6 +89,24 @@ mesh_directories <- paste0(here::here("data", "derived_data", "processed_meshes/
 
 <!-- label with water content (probably use `magick::image_ggplot()` or possibly **patchwork**) -->
 
+
+```{r eval= T}
+
+soilmesh::mesh_snapshot(mesh = mesheR::colorMesh(meshes$mesh_object[[1]], col = inf_col), outfile ="analysis/data/derived_data/mesh_snapshots/tbr_mix01_2021-01-15_cyl01.png", aspect_ratio = "16x9", overwrite = F)
+
+
+args <- tibble::tibble(
+  outfile = c("analysis/data/derived_data/mesh_snapshots/tbr_mix01_2021-01-15_cyl01.png",
+              "analysis/data/derived_data/mesh_snapshots/tbr_mix01_2021-01-15_cyl02.png"),
+  mesh = meshes$mesh_object[1:2],
+  aspect_ratio = "4x3",
+  overwrite = TRUE
+)
+
+args %>% 
+  pwalk(soilmesh::mesh_snapshot)
+```
+
 ## Colophon
 
 
@@ -73,15 +114,22 @@ mesh_directories <- paste0(here::here("data", "derived_data", "processed_meshes/
 
 This report was generated ` `r strftime(Sys.time(), format = '%a %e %b %Y, %I:%M %p')` ` using the following R packages:
 
-```{r colophon, cache = FALSE, include=TRUE, echo=FALSE}
+```{r colophon, cache = FALSE, include=TRUE, echo=FALSE, eval= F}
 # which R packages and versions?
-if ("devtools" %in% installed.packages()) devtools::session_info())
+
+sessioninfo::package_info()
+
+#if ("devtools" %in% installed.packages()) {
+#  devtools::session_info()
+#}
 ```
 
 The current Git commit details are:
 
-```{r git-details, cache = FALSE, include=TRUE, echo=FALSE}
+```{r git-details, cache = FALSE, include=TRUE, echo=FALSE , eval= F}
 # what commit is this file at? 
-if ("git2r" %in% installed.packages() & git2r::in_repository(path = ".")) git2r::repository(here::here())  
+if ("git2r" %in% installed.packages() & git2r::in_repository(path = ".")){
+  git2r::repository(here::here())  
+}
 ```
 

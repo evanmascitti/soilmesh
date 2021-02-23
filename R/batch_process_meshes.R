@@ -35,6 +35,10 @@ batch_process_meshes <- function(date,
 
 # assign directories and paths as character vectors ----------------------------------
 
+  if(!requireNamespace("here")){
+    stop("\nThis function requires the `here` package; please install it.")
+  }
+
   if(missing(date)){
     stop("No date supplied. Date is required to search for mesh files.")
   }
@@ -46,7 +50,7 @@ batch_process_meshes <- function(date,
 
   # create a new directory to hold the processed mesh files
 
-  processed_dir <- paste0(here::here("analysis/data/derived_data"), "/",
+  processed_dir <- paste0(here::here("analysis/data/derived_data/processed_meshes"), "/",
                           date, "_processed_meshes/")
 
   # throw an error if the directory already exists
@@ -55,8 +59,7 @@ batch_process_meshes <- function(date,
          There is already a directory at the output path.
          Halting function call to prevent-over-write.")
   }
-  # if it doesn't exist, create the directory
-  dir.create(processed_dir)
+
 
   # make a vector of file paths to read
   raw_file_paths <- list.files(path = raw_dir,
@@ -142,10 +145,13 @@ batch_process_meshes <- function(date,
                                       .f = Rvcg::vcgQEdecim, tarface = n_faces, ...))
   }
 
-  browser()
-
   # Write the list of meshes to their new file paths
 
+  # Create the directory first....this step was not performed at top so
+  # that if the function fails for another reason earlier in the call,
+  # this directory is not written.
+
+  dir.create(processed_dir)
   purrr::pwalk(.l = meshes, .f = Rvcg::vcgPlyWrite)
 
 

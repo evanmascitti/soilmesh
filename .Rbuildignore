@@ -7,4 +7,5 @@
 ^LICENSE\.md$
 ^pseudocode_for_daily_skeleton_chunk_analysis_Rmd_report*.
 ^analysis$
+^development_notes$
 

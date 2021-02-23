@@ -5,20 +5,16 @@
 \title{Re-orient and trim meshes, then re-write to new files}
 \usage{
 batch_process_meshes(
-  input_directory,
-  output_directory,
+  date,
   rtmatrix = NULL,
-  ...,
   downsample = TRUE,
-  overwrite = FALSE
+  n_faces = 1e+05,
+  overwrite = FALSE,
+  ...
 )
 }
 \arguments{
-\item{input_directory}{path to a directory containing one or more \code{.ply}
-files}
-
-\item{output_directory}{path to a directory where the new files will be
-written}
+\item{date}{character string corresponding to date 3D scans were collected}
 
 \item{rtmatrix}{a 4x4 matrix. Normally supplied by passing a character string
 corresponding to one of the YYYY-MM-DD dates in the \code{soiltestr::rtmatrices}
@@ -26,20 +22,25 @@ data object. Alternatively, pass a matrix either from the aforementioned
 data object or a matrix present as a variable in the existing global
 environment. \code{\link[=rtmatrices]{rtmatrices()}}}
 
-\item{...}{Other arguments passed to \code{\link[Rvcg:vcgQEdecim]{Rvcg::vcgQEdecim()}} (usually either
-\code{tarface} for a set number of faces or \code{percent} for a percentage of
-original face number (numeric, 0-1). Ignored if \code{downsample = TRUE}}
-
 \item{downsample}{Whether to reduce the number of faces by calling
 \code{\link[Rvcg:vcgQEdecim]{Rvcg::vcgQEdecim()}}}
 
+\item{n_faces}{if \code{downsample = TRUE}, number of faces to which mesh should
+be reduced. Defaults to 100k. Over-ride to a percent by supplying a numeric
+value with \verb{percent = <0-1>}, which is passed to  \code{\link[Rvcg:vcgQEdecim]{Rvcg::vcgQEdecim()}}}
+
 \item{overwrite}{whether to over-write existing files in the target directory
 (if they have identical names)}
+
+\item{...}{Other arguments passed to \code{\link[Rvcg:vcgQEdecim]{Rvcg::vcgQEdecim()}}}
 }
 \value{
-Writes files to disk and prints a message
+Writes files to disk and prints a message.
 }
 \description{
 This function automates a process that I do repeatedly after
 collecting 3D scans.
+}
+\details{
+\lifecycle{experimental}
 }

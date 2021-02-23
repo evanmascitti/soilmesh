@@ -4,26 +4,24 @@
 \alias{read_meshfiles}
 \title{Read multiple 3D mesh files}
 \usage{
-read_meshfiles(dir = NULL, ...)
+read_meshfiles(x, colors = TRUE, ...)
 }
 \arguments{
-\item{dir}{Directory in which to search for \code{.ply} files}
+\item{x}{character vector of paths pointing to .ply files}
+
+\item{colors}{whether to read mesh colors (defaults to TRUE)}
 
 \item{...}{additional arguments passed to \code{\link[Rvcg:vcgImport]{Rvcg::vcgImport()}}}
 }
 \description{
-A specific function to automate reading of \code{.ply} files into R. Specify a
-directory containing the files to automatically read all contained \code{.ply}
-files into R and compile them into a nested tibble with one row per file.
-Result can be piped to \code{\link[=parse_mesh_filename]{parse_mesh_filename()}} prior to mesh
-processing/analysis.
-}
-\details{
-Wraps \code{\link[=list.files]{list.files()}} from base R, \code{\link[stringr:str_remove]{stringr::str_remove()}},
-\code{\link[purrr:map]{purrr::map()}}, and \code{\link[Rvcg:vcgImport]{Rvcg::vcgImport()}} with specific arguments to
-locate files, import to current session , strip file extensions, and compile
-in tidy format.
+A wrapper to automate reading of \code{.ply} files into R. Specify a
+character vector of file paths which are compiled into a nested tibble with
+one row per file. The names of the files are parsed with
+\code{\link[=parse_mesh_filename]{parse_mesh_filename()}} to include the minimum amount of information
+required to uniquely identify the mesh. Other data such as water content
+can be added via joins to other data frames.
+)
 }
 \seealso{
-\code{\link[ecmfuns:gather.files]{ecmfuns::gather.files()}}, \code{\link[ecmfuns:read.files]{ecmfuns::read.files()}}, \code{\link[Rvcg:vcgImport]{Rvcg::vcgImport()}}
+\code{\link[Rvcg:vcgImport]{Rvcg::vcgImport()}}, \code{\link[=parse_mesh_filename]{parse_mesh_filename()}}
 }

@@ -29,17 +29,21 @@
 #' @export
 #'
 parse_mesh_filename <- function(x){
-  tibble::tibble(old_path = x,
-                 sans_extension = stringr::str_remove(string = basename(.data$old_path),
-                                                      pattern = "[.]ply$")) %>%
-  tidyr::separate(
-    col = .data$sans_extension,
-    into = c("experiment_ID", "soil_ID", "date", "cylinder_ID"),
-    sep = "_",
-    convert = FALSE,
-    remove = TRUE
-  ) %>%
+
+  mesh_file_info <- tibble::tibble(
+    full_path = x,
+    sans_extension = stringr::str_remove(string = basename(.data$full_path),
+                                                      pattern = "_processed[.]ply$")) %>%
+    tidyr::separate(
+      col = .data$sans_extension,
+      into = c("experiment_ID", "soil_ID", "date", "cylinder_ID"),
+      sep = "_",
+      convert = FALSE,
+      remove = TRUE
+      ) %>%
     dplyr::mutate(cylinder_ID = stringr::str_remove(string = .data$cylinder_ID,
                                                     pattern = "cyl")
     )
+
+  return(mesh_file_info)
 }

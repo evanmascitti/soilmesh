@@ -29,15 +29,18 @@ Imports:
     ggplot2,
     cowplot,
     lubridate,
-    scales,
     soiltestr,
-    lifecycle
+    lifecycle,
+    mesheR
 Suggests: 
     colorblindr,
     circular,
     magick,
     ggrepel,
-    asi468
+    asi468,
+    here,
+    rmarkdown,
+    scales
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle

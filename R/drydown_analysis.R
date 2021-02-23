@@ -29,6 +29,10 @@ drydown_analysis <- function(path){
     stop("This function requires the `ggrepel` package. Please install it.")
   }
 
+  if(!requireNamespace("ggrepel")){
+    stop("This function requires the `scales` package. Please install it.")
+  }
+
   if(!requireNamespace("asi468")){
     stop("This function requires the `asi468` package. Please install it.")
   }

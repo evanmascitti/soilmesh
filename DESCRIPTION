@@ -40,7 +40,11 @@ Suggests:
     asi468,
     here,
     rmarkdown,
-    scales
+    scales,
+    imager,
+    ecmfuns,
+    glue,
+    molaR
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle

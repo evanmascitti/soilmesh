@@ -5,7 +5,7 @@
 #'
 #' @param mesh mesh3d object to record
 #' @param output_file relative file path to save (quoted, ending in ".gif")
-#' @param phi vertical observer angle, see \link[rgl]{rgl.viewpoint}
+#' @param phi vertical observer angle, see [`rgl.viewpoint()`]
 #' @param zoom zooming factor, larger number is smaller object. Defaults to 0.8.
 #' @param n_snaps number of snapshots to concatenate
 #' @param fps speed at which frames are displayed (frames per second)

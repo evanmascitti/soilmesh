@@ -3,17 +3,30 @@
 #' @description Optional aspect ratio and extra components.
 #'
 #' @param mesh "mesh3d" object
-#' @param outfile path to save the snapshot (png format)
+#' @param outfile path to save the snapshot (png format). This will be
+#'   automatically appended to include the aspect ratio.
 #' @param wire whether to render mesh edges as a wire frame
 #' @param axes whether to also plot x, y, and z axes
 #' @param aspect_ratio either "16x9" (for widescreen presentation) or "4x3"
 #' @param overwrite whether to force over-write existing files of same names
 #'
-#' @return
+#' @return writes file to disk
 #' @export
 #'
 mesh_snapshot <- function(mesh, outfile, wire = TRUE, axes = FALSE,
                           aspect_ratio = "16x9",  overwrite = FALSE){
+
+  # eventually maybe modify this so it can parse information directly from the
+  # mesh files instead of having to manually specify the paths? This could be a
+  # conditional, so the user could still supply a path if desired.
+
+  # I guess it would actually be better to have a separate function that
+  # batch-saves the images....i.e. a wrapper around `parse_mesh_filename` and
+  # combined with `pwalk` and the correct arguments. Then this function would be
+  # called at the end of daily mesh data collection (similar to the
+  # batch_process_meshes() function.)
+
+
 
   # error messages if arguments mis-specified
 
@@ -42,7 +55,7 @@ outfile <- paste0(outfile, "_", aspect_ratio, ".png")
 
 
   rgl::clear3d(type = c("shapes", "lights"))
-  suppressWarnings(rgl::par3d(r3dDefaults) )
+  suppressWarnings(rgl::par3d(rgl::r3dDefaults) )
   rgl::rgl.viewpoint()
   rgl::bg3d("transparent")
 

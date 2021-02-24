@@ -15,6 +15,6 @@ new_cleatmark_report(file, ...)
 opens a new file in the RStudio IDE
 }
 \description{
-Report contains plots, a data summary, and images of the 3D mesh files.
-By default, report YAML is populated to support both HTML and PDF output.
+Report contains plots of mesh metrics and images of the 3D mesh files.
+YAML is populated to support both HTML and PDF output.
 }

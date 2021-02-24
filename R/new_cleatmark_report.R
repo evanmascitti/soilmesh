@@ -1,7 +1,7 @@
 #' @title Create a new report based on a template
 #'
-#' @description Report contains plots, a data summary, and images of the 3D mesh files.
-#' By default, report YAML is populated to support both HTML and PDF output.
+#' @description Report contains plots of mesh metrics and images of the 3D mesh files.
+#' YAML is populated to support both HTML and PDF output.
 #'
 #' @param file output path for report .Rmd file
 #' @param ... other arguments passed to [`rmarkdown::draft()`]

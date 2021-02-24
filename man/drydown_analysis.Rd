@@ -7,7 +7,7 @@
 drydown_analysis(path)
 }
 \arguments{
-\item{path}{path to raw data file written with \code{\link[=drydown_datasheet]{drydown_datasheet()}}}
+\item{path}{path to raw data file}
 }
 \value{
 3-item list of class \code{"soilmesh_drydown"}. All water content references are on a gravimetric basis

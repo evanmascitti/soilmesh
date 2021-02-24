@@ -19,7 +19,7 @@ dirtGIF3d(
 
 \item{output_file}{relative file path to save (quoted, ending in ".gif")}
 
-\item{phi}{vertical observer angle, see \link[rgl]{rgl.viewpoint}}
+\item{phi}{vertical observer angle, see \code{\link[=rgl.viewpoint]{rgl.viewpoint()}}}
 
 \item{zoom}{zooming factor, larger number is smaller object. Defaults to 0.8.}
 

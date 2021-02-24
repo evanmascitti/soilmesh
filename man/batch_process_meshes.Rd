@@ -8,7 +8,12 @@ batch_process_meshes(
   date,
   rtmatrix = NULL,
   downsample = TRUE,
-  n_faces = 1e+05,
+  n_faces = 250000,
+  recolor = TRUE,
+  write_cols = TRUE,
+  save_metrics = TRUE,
+  dne_tarface = 10000,
+  snapshots = TRUE,
   overwrite = FALSE,
   ...
 )
@@ -26,8 +31,18 @@ environment. \code{\link[=rtmatrices]{rtmatrices()}}}
 \code{\link[Rvcg:vcgQEdecim]{Rvcg::vcgQEdecim()}}}
 
 \item{n_faces}{if \code{downsample = TRUE}, number of faces to which mesh should
-be reduced. Defaults to 100k. Over-ride to a percent by supplying a numeric
+be reduced. Defaults to 250k. Over-ride to a percent by supplying a numeric
 value with \verb{percent = <0-1>}, which is passed to  \code{\link[Rvcg:vcgQEdecim]{Rvcg::vcgQEdecim()}}}
+
+\item{recolor}{whether to re-color the meshes based on the average hex color of a digital image taken during testing}
+
+\item{write_cols}{whether to write a csv file containing the hex color codes for each specimen (into the /derived_data/\<date\> directory)}
+
+\item{save_metrics}{whether to write a csv file containing morphometrics data derived from this set of meshes}
+
+\item{dne_tarface}{number of faces to further downsample mesh to compute DNE metric}
+
+\item{snapshots}{whether to capture screenshots of the meshes (by default, both 16x9 and 4x3 are written)}
 
 \item{overwrite}{whether to over-write existing files in the target directory
 (if they have identical names)}

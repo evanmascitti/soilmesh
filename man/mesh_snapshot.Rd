@@ -16,7 +16,8 @@ mesh_snapshot(
 \arguments{
 \item{mesh}{"mesh3d" object}
 
-\item{outfile}{path to save the snapshot (png format)}
+\item{outfile}{path to save the snapshot (png format). This will be
+automatically appended to include the aspect ratio.}
 
 \item{wire}{whether to render mesh edges as a wire frame}
 
@@ -27,7 +28,7 @@ mesh_snapshot(
 \item{overwrite}{whether to force over-write existing files of same names}
 }
 \value{
-
+writes file to disk
 }
 \description{
 Optional aspect ratio and extra components.

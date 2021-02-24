@@ -32,8 +32,8 @@ parse_mesh_filename <- function(x){
 
   mesh_file_info <- tibble::tibble(
     full_path = x,
-    sans_extension = stringr::str_remove(string = basename(.data$full_path),
-                                                      pattern = "_processed[.]ply$")) %>%
+    sans_extension = stringr::str_remove_all(string = basename(.data$full_path),
+                                         pattern = "[.]ply$|_processed")) %>%
     tidyr::separate(
       col = .data$sans_extension,
       into = c("experiment_ID", "soil_ID", "date", "cylinder_ID"),
@@ -42,7 +42,8 @@ parse_mesh_filename <- function(x){
       remove = TRUE
       ) %>%
     dplyr::mutate(cylinder_ID = stringr::str_remove(string = .data$cylinder_ID,
-                                                    pattern = "cyl")
+                                                    pattern = "cyl"),
+                  date = lubridate::as_date(date)
     )
 
   return(mesh_file_info)

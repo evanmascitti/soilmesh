@@ -6,7 +6,7 @@
 #'   the water loss usually is linear above the shrinkage limit and then becomes
 #'   curvilinear as the soil dries further.
 #'
-#' @param path path to raw data file written with [`drydown_datasheet()`]
+#' @param path path to raw data file
 #'
 #' @return 3-item list of class `"soilmesh_drydown"`. All water content references are on a gravimetric basis
 #'
@@ -132,6 +132,7 @@ drydown_analysis <- function(path){
     ) %>%
       dplyr::left_join(water_losses_summary) %>%
       dplyr::mutate(plot_text = paste0("Avg loss\n", round(100*.data$avg_w_loss_per_hr, 2), "% /hr"))
+    # could construct a plotmath expression here to use the delta symbol, but not important right now
 )
     # make a data frame containing the water contents, for plotting purposes
 
@@ -164,11 +165,11 @@ drydown_analysis <- function(path){
                            label = .data$plot_text),
                          vjust= "inward",
                          hjust = "inward")+
-      ggrepel::geom_text_repel(#data = w_cont_labs_data,
-                         ggplot2::aes(label = round(100*.data$water_content, 1)),
-                         color = 'grey25', group = NA, size = 3,
+     # ggrepel::geom_text_repel(#data = w_cont_labs_data,
+     #                    ggplot2::aes(label = round(100*.data$water_content, 1)),
+     #                    color = 'grey25', group = NA, size = 3,
                          #nudge_x = lubridate::dminutes(10),
-                         hjust = 'inward', vjust= 'inward')+
+     #                    hjust = 'inward', vjust= 'inward')+
       ggplot2::scale_x_datetime("Clock time", date_labels = "%l:%M")+
       ggplot2::scale_y_continuous(bquote("Water content, % g g"^1),
                                   labels = scales::label_percent(accuracy = 1, suffix = ""))+

@@ -1,32 +1,38 @@
 ---
 title: "Cleat-mark device data report"
 author: "Evan C. Mascitti"
-date: "Report compiled `r strftime(Sys.time(), format = '%a %e %b %Y, %I:%M %p')`"
+date: "Report generated `r strftime(Sys.time(), format = '%a %e %b %Y, %I:%M %p')`"
 params: 
-  test_dates: ["2021-02-21", "2021-02-22"]
+  test_dates: ["2021-01-15"]
+mainfont: Arial
+mathfont: Fira Math Regular
+codefont: Lucida Console
+links-as-notes: true
+papersize: letter
+geometry: "left=1in, right=1in, top=1in, bottom=1in"  
+urlcolor: blue
+linkcolor: blue
+citecolor: blue
+toccolor: blue
 output:
   bookdown::html_document2:
     number_sections: false
     css: "basic_sans_theme.css"
-########################################################################
   bookdown::pdf_document2:
     number_sections: false
     latex_engine: xelatex
-    mainfont: Arial
-    mathfont: Fira Math Regular
-    codefont: Lucida Console
-    links-as-notes: true
-    papersize: letter
-    geometry: "left=1in, right=1in, top=1in, bottom=1in"  
-    urlcolor: blue
-    linkcolor: blue
-    citecolor: blue
-    toccolor: blue
     includes:
       in_header: "preamble.tex"
-  
-
+editor_options: 
+  chunk_output_type: console
 ---
+
+<!-- The aspect ratio of the screenshots is still gacked but I can fix this some other time 
+as it is not imperative to have it perfect right now -I can simply change one part of the function
+which saves the screenshot and then re-run the function. 
+
+The batch_process_meshes function should probably be re-named because it does a whole bunch of other things too....it extracts the color codes and saves them (will be useful later for plotting or other analyis) in addition to processing the meshes and taking screenshots of them. 
+-->
 
 ```{r setup, include=FALSE}
 
@@ -35,86 +41,291 @@ output:
 
 # Don't print any messages, warnings, or code.
 
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file(),
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+knitr::opts_chunk$set(
                      echo = FALSE, 
                      message = FALSE, 
-                     warning = FALSE)
+                     warning = FALSE,
+                     out.width= "90%",
+                     fig.align='center',
+                     dpi = 300,
+                     results = 'hide'
+                     )
 
-xfun::pkg_attach(c("tidyverse", "rgl"))
+xfun::pkg_attach(c("tidyverse", "rgl", "magick", "cowplot", "patchwork"))
+
+theme_set(theme_cowplot())
+
+# start clock
+
+start_time <- Sys.time()
 
 ```
-
-## Summary of tests
 
 ```{r}
-test_dates <- params$test_dates
+# test_dates <- params$test_dates
+
+test_dates <- "2021-01-15"
 
 ```
 
-```{r read-raw-data}
 
-mesh_directories <- paste0(here::here("analysis", "data", "derived_data", "processed_meshes"), "/", test_dates, "_processed_meshes")
+```{r calculate-water-contents}
 
-mesh_file_paths <- purrr::map(.x = mesh_directories, .f = ~list.files(path = ., pattern = "[.]ply$", full.names = T)) %>% 
-  purrr::reduce(.x = ., .f = c)
+ # construct file paths based on date 
+drydown_paths <- paste0("analysis/data/raw_data/cleat_mark_testing/",
+                          test_dates, "/", test_dates, "_drydown_data.csv")
+
+
+test_time_water_content_data <- purrr::map(
+  .x = drydown_paths,
+  .f = readr::read_csv,
+  na = "-",
+  col_types = cols(cylinder_ID = col_character(),
+                   tin_tare_set = col_character())
+) %>%
+  purrr::map(.f = ~dplyr::filter(., .data$time_type == "test_time"))
+
+
+# write a function that computes the water content for all the samples 
+# on a given day (i.e. in a given drydown data file)....it should 
+# perform a separate lookup for the tin tares based on the unique date 
+# value found in the file itself. 
+
+cleat_mark_water_contents <- function(path){
+  
+# read drydown data files 
+  w_data <- readr::read_csv(path, na= "-") %>% 
+    dplyr::filter(time_type == "test_time")
+  
+  # join to correct tin tare set 
+  
+  tin_tare_date <- unique(as.character(w_data$tin_tare_set))
+  
+  w_data <- w_data %>%
+    dplyr::left_join(asi468::tin_tares[[tin_tare_date]])%>%
+    soiltestr::add_w() %>%
+    dplyr::select(.data$soil_ID, .data$date, .data$cylinder_ID, .data$water_content, .data$comments)
+  
+  return(w_data)
+}
+
+# apply the function to all the paths to drydown files listed above (which 
+# in turn was constructed from the `test_dates` parameter in the YAML,
+# this way everything is linked to the date of data collection 
+
+water_content_values <- purrr::map(.x =drydown_paths, .f = cleat_mark_water_contents) %>% 
+  purrr::reduce(rbind)
+```
+
+
+```{r read-mesh-data}
+
+daily_directories <- paste0("analysis/data/derived_data/cleat_mark_testing/", test_dates, "/")
+
+mesh_file_paths <- purrr::map(.x = daily_directories, .f = ~list.files(path = paste0(., "/processed_meshes"), pattern = "[.]ply$", full.names = T)) %>% 
+  purrr::reduce(.x = ., .f = c) 
 
 # read mesh files into current R session and enframe them in a tibble
 
-meshes <- mesh_file_paths %>% 
-  soilmesh::read_meshfiles()
-
-
-```
-
-
-```{r}
+meshes <-  soilmesh::read_meshfiles(mesh_file_paths) %>% 
+  dplyr::arrange(cylinder_ID) %>% 
+  dplyr::left_join(water_content_values)
 
 ```
 
 
-## Plot of water content vs. derived mesh metrics 
+## Water content vs. derived mesh metrics 
 
-```{r}
-# map color to date
-# facet by metric
+```{r compute-mesh-metrics}
+
+# compute the volume and surface area metrics and join with water contents
+# meshes <- meshes %>% 
+#   dplyr::mutate(vol_above = purrr::map_dbl(mesh_object, soilmesh::vol_above),
+#                 vol_below = purrr::map_dbl(mesh_object, soilmesh::vol_below),
+#                 vol_total = vol_above + vol_below,
+#                 surf_area_cm2 = (0.1*0.1)*purrr::map_dbl(mesh_object, Rvcg::vcgArea),
+#                 rfi = surf_area_cm2 / (7*7*pi)) %>% 
+#                dplyr::left_join(water_content_values) 
 ```
+
+
+```{r plot-mesh-metrics}
+# eventually I will probably want to 
+# map color to date and facet by metric
+
+# for now use color to distinguish the soils
+
+# construct paths to data files 
+
+metrics_file_paths <- paste0(daily_directories, "/", test_dates, "_mesh_metrics.csv")
+
+
+metrics_plotting_data <- purrr::map(metrics_file_paths, readr::read_csv, col_types = readr::cols(date = readr::col_date()), na = c("NA", "-")) %>% 
+  purrr::reduce(rbind) %>% 
+  tidyr::pivot_longer(cols= c(vol_above:dne),
+                      names_to = "metric",
+                      values_to = "value") %>% 
+  dplyr::filter(metric != "surf_area_cm2") %>% 
+  dplyr::left_join(water_content_values)
+  
+
+# set more readable facet labels  by writing a labeller function 
+
+# metric_facet_labs <- tibble::tibble(metric = c(rfi= "RFI", surf_area_cm2 = "Surface~area(cm^2)", vol_above = "Vol.~above~datum(cm^3)", vol_below = "Vol.~above~datum(cm^3)", vol_below = "Total~vol.~(cm^3)"))
+
+metric_facet_labs <- as_labeller(c(rfi= "RFI", surf_area_cm2 = "Surface~area~(cm^2)", vol_above = "Volume~above~(cm^3)", vol_below = "Volume~above~(cm^3)", vol_total = "Total~volume~(cm^3)", dne = "DNE"), default = label_parsed)
+
+
+metrics_plots <- ggplot(metrics_plotting_data, aes(water_content, value, fill = soil_ID))+
+  geom_point(size = 2.5, shape =21, alpha= 2/3, stroke =0.25)+
+  theme_bw()+
+  scale_x_continuous(labels = scales::label_percent(accuracy = 1, suffix = ""))+
+  labs(x= bquote("Water content, % g g"^-1),
+       y= "Metric value")+
+  #guides(fill = guide_legend(title = "Soil ID", title.hjust = 0.5))+
+  colorblindr::scale_fill_OkabeIto()+
+  theme(strip.text.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
+        strip.background = element_rect(fill = 'grey95'),
+        legend.position = 'none',
+        panel.grid.minor = element_blank())+
+  facet_grid(metric~soil_ID, scales = 'free_y',
+             labeller = labeller(metric = metric_facet_labs))
+
+print(metrics_plots)
+```
+
 
 ## Plot of water content vs. clock time (i.e. drying rates)
 
-```{r}
-# drydown_analysis()
+
+```{r drydown-plots}
+
+drydown_plots <- purrr::map(drydown_paths, soilmesh::drydown_analysis) %>% 
+  purrr::map(pluck, 3)
+
+patchwork::wrap_plots(drydown_plots, ncol = 1)
 ```
 
-## Screenshots of each mesh 
 
-<!-- label with water content (probably use `magick::image_ggplot()` or possibly **patchwork**) -->
+## Mesh screenshots
+
+```{r fig.show='hold'}
+
+# read snapshots into R session with magick
+
+# construct file paths to read images into R session
+# then read images for each row and add a new column containing th the text with which to annotate the image . Add the text. 
+
+meshes_w_images <- metrics_plotting_data %>%
+  tidyr::pivot_wider(names_from = 'metric', values_from = 'value') %>%
+  dplyr::left_join(meshes) %>%
+  mutate(
+    image_path = paste0(
+      "analysis/data/derived_data/cleat_mark_testing/",
+      date,
+      "/mesh_snapshots/",
+      experiment_ID,
+      "_",
+      soil_ID,
+      "_",
+      date,
+      "_cyl",
+      cylinder_ID,
+      "_4x3.png"
+    ),
+    image = purrr::map(image_path, magick::image_read)
+  ) %>%
+  mutate(
+    image_text = paste0(
+      "w = ",
+      100 * round(water_content, 3),
+      " | RFI = ",
+      100 * round(rfi - 1, 2),
+      " | DNE = ",
+      round(dne, 0),
+      " | Vol. = ",
+      round(vol_total, 1)
+    )
+  ) %>%
+  dplyr::arrange(.data$soil_ID, .data$date, dplyr::desc(.data$water_content))
+
+# can't figure out how to do this with piping so just create the vector externally and tack it onto the tibble using the $. It has to be coerced to a list because a magick object apparently cant be treated as a regular vector
+
+magick_vector <- image_join(meshes_w_images$image)
+
+meshes_w_images$annotated_image <- as.list(image_annotate(magick_vector, text = meshes_w_images$image_text, size = 64))
+
+# create new tibble of image montages, one per soil
+
+# montages <- meshes_w_images %>% 
+#   group_by(date, soil_ID) %>% 
+#   nest() %>% 
+#   mutate(by_soil_magick_vector = map(data, ~image_join(.$annotated_image)),
+#          montage = map(by_soil_magick_vector, image_montage))
+#   
+# image_ggplot(montages$montage[[1]])
 
 
-```{r eval= T}
-
-soilmesh::mesh_snapshot(mesh = mesheR::colorMesh(meshes$mesh_object[[1]], col = inf_col), outfile ="analysis/data/derived_data/mesh_snapshots/tbr_mix01_2021-01-15_cyl01.png", aspect_ratio = "16x9", overwrite = F)
+# The montage approach doesn't seem to be working as well as I had hoped. Instead let's try iterating over the individual images and putting them into a ggplot environment - then I can use patchwork to piece them together into a 1x3 patchwork object, creating one plot of 3 images per soil. 
 
 
-args <- tibble::tibble(
-  outfile = c("analysis/data/derived_data/mesh_snapshots/tbr_mix01_2021-01-15_cyl01.png",
-              "analysis/data/derived_data/mesh_snapshots/tbr_mix01_2021-01-15_cyl02.png"),
-  mesh = meshes$mesh_object[1:2],
-  aspect_ratio = "4x3",
-  overwrite = TRUE
-)
+meshes_w_images$ggplotimage <- map(meshes_w_images$annotated_image, image_ggplot)
 
-args %>% 
-  pwalk(soilmesh::mesh_snapshot)
+nested_ggplot_images <- meshes_w_images %>% 
+  group_by(date, soil_ID) %>% 
+  nest() %>% 
+  mutate(patchwork_title = paste0(soil_ID, ",", " tested ", strftime(date, format = "%b %e")),
+         patchwork_of_images = map(data, ~patchwork::wrap_plots(.$ggplotimage, nrow = 1))) %>% 
+  arrange(soil_ID, date)
+
+# again I can't quite figure out how to do this inside a tibble using mutate 
+# but I can do it externally with paired lists. 
+
+# write a function to add the title to the patchwork 
+
+add_soil_id <- function(patchwork_object, title){
+  patchwork_object+
+    patchwork::plot_annotation(title = title)
+}
+
+# construct list of arguments to pass to pmap
+ 
+patchwork_args <- nested_ggplot_images %>% 
+  ungroup() %>% 
+  rename(title = patchwork_title, 
+         patchwork_object = patchwork_of_images) %>% 
+  select(patchwork_object, title)
+
+# iterate over the arguments in parallel: the patchwork object and the title to add
+
+patchworks <- pmap(patchwork_args, add_soil_id)
+
+# If I wrap the titled patchworks into a single patchwork, the prior annotations are lost. However they can just be printed in succession to show all of them 
+
+print(patchworks)
+
+# patchworks[[1]]
+# patchworks[[2]]
+# patchworks[[3]]
+# patchworks[[4]] 
+
+end_time <- Sys.time()
+
+report_runtime <- round(as.numeric(end_time - start_time), 2)
+
+
 ```
 
-## Colophon
 
 
 ### Colophon
 
-This report was generated ` `r strftime(Sys.time(), format = '%a %e %b %Y, %I:%M %p')` ` using the following R packages:
+Total run time was `r report_runtime` seconds. 
 
-```{r colophon, cache = FALSE, include=TRUE, echo=FALSE, eval= F}
+<!-- This report was generated using the following R packages: -->
+
+```{r colophon, cache = FALSE, include=TRUE, echo=FALSE, eval=F}
 # which R packages and versions?
 
 sessioninfo::package_info()
@@ -124,9 +335,9 @@ sessioninfo::package_info()
 #}
 ```
 
-The current Git commit details are:
+<!-- The current Git commit details are: -->
 
-```{r git-details, cache = FALSE, include=TRUE, echo=FALSE , eval= F}
+```{r git-details, cache = FALSE, include=TRUE, echo=FALSE , eval=F}
 # what commit is this file at? 
 if ("git2r" %in% installed.packages() & git2r::in_repository(path = ".")){
   git2r::repository(here::here())  

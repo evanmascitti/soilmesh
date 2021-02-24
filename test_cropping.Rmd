@@ -1,0 +1,31 @@
+---
+title: "Presentation Ninja"
+subtitle: "⚔<br/>with xaringan"
+author: "Yihui Xie"
+institute: "RStudio, PBC"
+date: "2016/12/12 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16x9"
+---
+
+<!-- background-image: url("analysis/data/derived_data/cleat_mark_testing/2021-01-15/mesh_snapshots/tbr_mix01_2021-01-15_cyl01_16x9.png") -->
+background-image: url("test16x9.png")
+background-size: contain
+
+# An example mesh
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+???
+
+Image credit: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Sharingan_triple.svg)
+
+---

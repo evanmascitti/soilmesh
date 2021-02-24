@@ -49,7 +49,7 @@ vol_above <- function(mesh, z_displ_mm = 0.01, ball_radius_mm = 0.005){
                                                        y= 0,
                                                        z= -z_displ_mm)) %>%
     Rvcg::vcgBallPivoting(radius = ball_radius_mm) %>%
-    Rvcg::vcgClean(sel = c(2,1,4), iterate = T) %>%
+    Rvcg::vcgClean(sel = c(2,1,4), iterate = T, silent = T) %>%
     Rvcg::vcgVolume()
 
   # convert to cm3 and then subtract the extra volume added by offsetting the

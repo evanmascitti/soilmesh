@@ -8,4 +8,5 @@
 ^pseudocode_for_daily_skeleton_chunk_analysis_Rmd_report*.
 ^analysis$
 ^development_notes$
+^inst/rmarkdown/templates/cleatmark-daily-device-report/skeleton/code_to_fix_rgl_parameters.R$
 

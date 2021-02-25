@@ -376,7 +376,9 @@ if(save_metrics){
                   dne_safely = purrr::map(.data$mesh, .f = purrr::safely(~get_dne(bigmesh = ., dne_tarface = dne_tarface),
                                      otherwise = NA_real_,
                                      quiet = F)),
-                  dne = purrr::map_dbl(.data$dne_safely, purrr::pluck, 1)
+                 # OLD WAY dne = purrr::map_dbl(.data$dne_safely, purrr::pluck, 1)
+                 # c.f Jenny Bryam: USING BUILT-IN INDEXING FUNCTIONALITY OF MAP (USE A NAME OR A POSITION):
+                 dne = purrr::map_dbl(.data$dne_safely, 1)
     )
 
 

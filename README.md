@@ -22,8 +22,8 @@ reproducibility of my analyses and eliminates possible human errors,
 which are hard to detect and trace.
 
 This package has been kept separate from the functions in
-**diRtscience** because the mesh processing methods are very specific to
+**soiltestr** because the mesh processing methods are very specific to
 my project, and it is not likely anyone else would need to use the
-functions residing in **soilmesh**. I do plan to publish **diRtscience**
+functions residing in **soilmesh**. I do plan to publish **soiltestr**
 on CRAN (with a better name), so I want to be a good curator of that
 package and keep my niche stuff out of it.

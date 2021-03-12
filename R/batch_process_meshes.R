@@ -42,7 +42,7 @@ batch_process_meshes <- function(date,
                                  ...
                                  ){
 
-
+#browser()
 # assign directories and paths as character vectors ----------------------------------
 
   if(!requireNamespace("here")){
@@ -55,13 +55,27 @@ batch_process_meshes <- function(date,
 
   # use date argument to construct path to directory containing input files
 
-  raw_dir <- paste0(here::here("analysis/data/raw_data/cleat_mark_testing", "/",
-                               date, "/raw_meshes"))
+  raw_meshes_dir <- paste0(here::here("analysis/data/raw_data/cleat_mark_testing",
+                               date, "raw_meshes"))
 
 
-  # create a directory for any derived data from today, but throw error if it already exists.
+  #  build an experiment-level directory path for derived cleat mark data, but don't write it yet.
+  # if this directory does not already exist, create it now.
 
-  daily_data_directory <- paste0(here::here("analysis/data/derived_data/cleat_mark_testing"), "/", date)
+  experiment_level_derived_cleatmark_data_dir <- paste0(
+    here::here("analysis/data/derived_data/cleat_mark_testing")
+    )
+
+  if(!dir.exists(experiment_level_derived_cleatmark_data_dir)){
+    dir.create(experiment_level_derived_cleatmark_data_dir)
+  }
+
+  #  build a directory path for ALL of today's cleat mark data, but don't write it yet
+  # throw error if this directory already exists.
+
+ daily_data_directory <- paste0(experiment_level_derived_cleatmark_data_dir,
+                                "/",
+                                date)
 
   if(dir.exists(daily_data_directory) && overwrite == FALSE){
     stop("\n
@@ -70,30 +84,21 @@ batch_process_meshes <- function(date,
          Use `overwrite = TRUE` to force over-write.")
   }
 
-    dir.create(daily_data_directory)
+  # create a path for a new directory to hold the processed mesh files.
+ # Don't actually write this sub-directory yet.
 
-
-  # create a _path_ to a new directory to hold the processed mesh files. Don't actually write this sub-directory yet.
-
-  processed_dir <- paste0(daily_data_directory, "/processed_meshes")
-
-  # throw an error if the directory that will contain the processed mesh files already exists
-  if(dir.exists(processed_dir) && overwrite == FALSE){
-    stop("\n
-         There is already a directory at the output path.
-         Halting function call to prevent-over-write.")
-  }
+  processed_meshes_dir <- paste0(daily_data_directory, "/processed_meshes")
 
 
   # make a vector of file paths to read
-  raw_file_paths <- list.files(path = raw_dir,
+  raw_mesh_file_paths <- list.files(path = raw_meshes_dir,
                                pattern = "ply$",
                                full.names = T)
 
   # make a vector of file paths to write
-  output_file_paths <- paste0(processed_dir,
+  output_mesh_file_paths <- paste0(processed_meshes_dir,
                               "/",
-                              stringr::str_remove(string = basename(raw_file_paths),
+                              stringr::str_remove(string = basename(raw_mesh_file_paths),
                                                   pattern = "[.]ply$"),
                               "_processed.ply"
   )
@@ -121,22 +126,6 @@ batch_process_meshes <- function(date,
     rot_trans_matrix <- rtmatrix
   }
 
-  # error message if processed mesh file names already exist in output directory
-
-  check_for_processed_meshes <- length(
-    list.files(path = processed_dir,
-               pattern = "[.]ply$",
-               full.names = T)
-  )
-
-  if(check_for_processed_meshes != 0 && !overwrite){
-    stop("\n`.ply files are already present in target directory.
-         \nDid you use the wrong directory? \n
-         If you really want to remove the existing files, use `overwrite = TRUE` to force overwrite.")
-  }
-
-
-
   # start stopwatch
   start_time <- Sys.time()
 
@@ -149,14 +138,15 @@ batch_process_meshes <- function(date,
 
   message(crayon::cyan("Reading mesh files..."))
 
-  meshes <- soilmesh::parse_mesh_filename(x = raw_file_paths) %>%
+  meshes <- soilmesh::parse_mesh_filename(x = raw_mesh_file_paths) %>%
     dplyr::mutate(mesh_object = purrr::map(.x = .data$full_path,
                                            .f = Rvcg::vcgImport),
                   mesh = purrr::map(.x = .data$mesh_object,
                                     .f = soilmesh::pre_process_mesh,
                                     rot_tr_matr = rot_trans_matrix),
-                  filename = output_file_paths,
-                  binary = FALSE)
+                  filename = output_mesh_file_paths,
+                  binary = FALSE) %>%
+    dplyr::select(-.data$mesh_object)
 
   # if meshes are to be downsampled, replace the mesh column in the meshes tibble
   # with a smaller version
@@ -166,8 +156,16 @@ batch_process_meshes <- function(date,
 
     meshes <- meshes %>%
       dplyr::mutate(mesh = purrr::map(.x = .data$mesh,
-                                      .f = Rvcg::vcgQEdecim, tarface = n_faces, ...))
+                                      .f = Rvcg::vcgQEdecim,
+                                      tarface = n_faces, ...))
   }
+
+
+  # write directory to hold today's processed meshes - this needs to happen
+  # before the re-coloring step because the hex code colors file is written
+  # inside this directory
+
+  dir.create(daily_data_directory)
 
 
   # if meshes are to be recolored, read in the image files and extract their colors.
@@ -186,28 +184,36 @@ batch_process_meshes <- function(date,
 
 
     # create vector of image files to read
-    image_paths <- list.files(path = paste0("analysis/data/raw_data/cleat_mark_testing/", date, "/color_photos/"),
+
+    raw_color_image_data_dir <- here::here("analysis/data/raw_data/cleat_mark_testing",
+                                           date,
+                                           "color_photos")
+
+    raw_image_paths <- list.files(path = raw_color_image_data_dir,
                               pattern = "[.]png|[.]jpg|[.]jpeg",
                               ignore.case = T,
                               full.names = T)
 
-    # read order that the images were recorded and arrange table accordingly.
-    # Since R automatically orders the image files based on their name, they
+    # read file which contains the order that the images were recorded and
+    # arrange table according to order they were taken. Since R automatically
+    # orders the image files based on their name, they
     # will be in the order they were taken. No need to keep track of the image
     # file numbers generated by my iPhone camera.
 
-    color_photos_index <- readr::read_csv(file = paste0("analysis/data/raw_data/cleat_mark_testing/", date, "/color_photos/", date, "_color_photos_index.csv"),
+    color_photos_index_path <- paste0(raw_color_image_data_dir, "/", date, "_color_photos_index.csv")
+
+    color_photos_index <- readr::read_csv(file = color_photos_index_path,
                     col_types = readr::cols(cylinder_ID = readr::col_character()),
                     na = "-") %>%
       dplyr::arrange(.data$test_order) %>%
-      dplyr::mutate(image_path = image_paths)
+      dplyr::mutate(image_path = raw_image_paths)
 
 
     # add new column to color_photos_index tibble containing the "cimg" object,
     # then extract the hex code and select only relevant columns
 
     hex_colors <- color_photos_index %>%
-      dplyr::mutate(img = purrr::map(.x = image_paths, .f = imager::load.image),
+      dplyr::mutate(img = purrr::map(.x = raw_image_paths, .f = imager::load.image),
                     hex_color = purrr::map_chr(.x = .data$img, .f = ecmfuns::hex_extract)) %>%
       dplyr::select(.data$cylinder_ID, .data$hex_color)
 
@@ -227,7 +233,7 @@ batch_process_meshes <- function(date,
 
     # construct outfile path
 
-    hex_colors_path <- paste0(daily_data_directory, "/hex_colors.csv")
+    hex_colors_path <- paste0(daily_data_directory, "/", date, "_hex_colors.csv")
 
     # construct tibble
     hex_colors_tibble <- meshes %>%
@@ -248,7 +254,10 @@ batch_process_meshes <- function(date,
   # that if the function fails for another reason earlier in the call,
   # this directory is not written.
 
-  dir.create(processed_dir)
+  dir.create(processed_meshes_dir)
+
+  message(crayon::cyan("Writing new mesh files..."))
+
   purrr::pwalk(.l = meshes, .f = Rvcg::vcgPlyWrite)
 
 
@@ -258,14 +267,14 @@ batch_process_meshes <- function(date,
 
   # count number of .ply files now existing in output directory
 
-  n_new_files <- length(list.files(path = processed_dir,
+  n_new_files <- length(list.files(path = processed_meshes_dir,
                                    pattern = "[.]ply$"))
 
 
   # make sure the files are readable by reading the first one back into R
 
   readability_check <- Rvcg::vcgImport(
-    file = list.files(path = processed_dir, full.names = T, pattern = "[.]ply$")[1],
+    file = list.files(path = processed_meshes_dir, full.names = T, pattern = "[.]ply$")[1],
     readcolor = TRUE)
 
 
@@ -425,7 +434,7 @@ if(save_metrics){
 
   end_time <- Sys.time()
 
-  time_diff <- lubridate::as.period(round(end_time - start_time, 2))
+  time_diff <- lubridate::as.period(round((end_time - start_time), 2))
 
   message(crayon::green(paste0("Operation complete. Run time was ",
       time_diff, ". Please verify that the files were written correctly.")))

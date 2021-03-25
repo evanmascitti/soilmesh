@@ -53,6 +53,12 @@ batch_process_meshes <- function(date,
     stop("No date supplied. Date is required to search for mesh files.")
   }
 
+  if(!requireNamespace("mesheR")){
+    stop("\nThis function requires the `mesheR` package; please install it.")
+  }
+
+
+
   # use date argument to construct path to directory containing input files
 
   raw_meshes_dir <- paste0(here::here("analysis/data/raw_data/cleat_mark_testing",
@@ -290,7 +296,7 @@ batch_process_meshes <- function(date,
          Check that both input and output directories exist and contain one or more `.ply` files.")
   }
 
-  mesheR::wiremesh3d(x = readability_check, col = 'grey75')
+  rgl::wire3d(x = readability_check, color = 'grey75')
   soilmesh::add_origin_axes()
 
   Sys.sleep(5)

@@ -12,6 +12,11 @@ vol_faceweighted(mesh, radius = 7)
 \item{radius}{Radius in cm that the mesh was trimmed, see
 \code{\link[=pre_process_mesh]{pre_process_mesh()}} and \code{\link[=remove_cyl]{remove_cyl()}}}
 }
+\value{
+List of length 3; each element is a numeric vector of length 1
+containing the computed volume above or below the reference datum, or the
+sum of these two (absolute value, i.e. total displacement)
+}
 \description{
 Computes area of each face and average distance of its 3
 vertices. Multiplies these values to yield a weighted "approximate volume"

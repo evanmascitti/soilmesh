@@ -8,7 +8,9 @@
 #' @param mesh Object of class "mesh3d"
 #' @param radius Radius in cm that the mesh was trimmed, see
 #'   [`pre_process_mesh()`] and [`remove_cyl()`]
-#'
+#' @return List of length 3; each element is a numeric vector of length 1
+#'   containing the computed volume above or below the reference datum, or the
+#'   sum of these two (absolute value, i.e. total displacement)
 #' @export
 #'
 #' @example inst/examples/vol_faceweighted_example.R

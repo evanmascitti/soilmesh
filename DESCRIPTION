@@ -44,7 +44,7 @@ Suggests:
     ecmfuns,
     glue,
     molaR,
-    mesheR
+    mesheR (>= 0.4.200213)
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle

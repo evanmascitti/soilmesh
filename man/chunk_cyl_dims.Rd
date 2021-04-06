@@ -40,6 +40,8 @@ The resin volume was computed by measuring the plug's thickness to ± 0.01
 mm in 3 locations with a digital caliper. The volume was computed from this
 thickness and the known cylinder diameter of 6 1/16". The resin volume was
 subtracted from the water-measured volume to give the actual empty volume
-available to compacted soil.
+available to compacted soil. A correction was also made for the hex bolt-nut
+combination embedded in the resin, see image below:
+\figure{man/figure/nut-bolt-combo-schematic.svg}
 }
 \keyword{datasets}

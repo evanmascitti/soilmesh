@@ -30,7 +30,9 @@
 #'   mm in 3 locations with a digital caliper. The volume was computed from this
 #'   thickness and the known cylinder diameter of 6 1/16". The resin volume was
 #'   subtracted from the water-measured volume to give the actual empty volume
-#'   available to compacted soil.
+#'   available to compacted soil. A correction was also made for the hex bolt-nut
+#'   combination embedded in the resin, see image below:
+#'   ![](man/figure/nut-bolt-combo-schematic.svg)
 #'
 #' @format A tibble with 3 columns and 12 rows (one for each cylinder)
 #'

@@ -20,7 +20,7 @@ df <- tibble::tibble(
   date = date,
   experiment_name = "",
   sample_name	="",
-  cylinder_ID	= "",
+  cylinder_ID	= c(paste0(0, 1:9), 10:12),
   filled_cylinder_mass_g = "",
   tin_tare_set = tin_tare_set,
   tin_number = "",
@@ -29,7 +29,7 @@ df <- tibble::tibble(
   comments = ""
 )
 
-file_path <- here::here(dir, glue::glue("cleatmark-cyl-prep-QC_{date}"))
+file_path <- here::here(dir, glue::glue("cleatmark-cyl-prep-QC_{date}.csv"))
 
 if(file.exists(file_path)) {
   stop("File already exists; stopping call to prevent over-write")
@@ -38,7 +38,7 @@ if(file.exists(file_path)) {
 }
 
 if(file.exists(file_path)){
-  crayon::green("Success! Wrote `glue::glue(file_path)` to disk.")
+  crayon::green(glue::glue("Success! Wrote {file_path} to disk."))
 }
 
 }

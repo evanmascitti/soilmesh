@@ -4,14 +4,14 @@
 \alias{new_cleat_mark_datasheets}
 \title{Create file structure and empty data sheets for cleat mark testing}
 \usage{
-new_cleat_mark_datasheets(date, experiment_ID, soil_IDs)
+new_cleat_mark_datasheets(date, experiment_name, sample_names)
 }
 \arguments{
 \item{date}{data collection date ("YYYY-MM-DD")}
 
-\item{experiment_ID}{character string uniquely identifying this set of soils or mixtures}
+\item{experiment_name}{character string uniquely identifying this set of soils or mixtures}
 
-\item{soil_IDs}{character vector of the unique identifiers of the soils being
+\item{sample_names}{character vector of the unique identifiers of the soils being
 tested (length 4)}
 }
 \value{

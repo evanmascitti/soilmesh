@@ -3,15 +3,15 @@
 #' @description Creates 2 directories and 2 additional data sheets. Designed to
 #'   store penetrometer data, color photo indexes, and raw mesh files.
 #'
-#' @param experiment_ID character string uniquely identifying this set of soils or mixtures
-#' @param soil_IDs character vector of the unique identifiers of the soils being
+#' @param experiment_name character string uniquely identifying this set of soils or mixtures
+#' @param sample_names character vector of the unique identifiers of the soils being
 #'   tested (length 4)
 #' @param date data collection date ("YYYY-MM-DD")
 #'
 #' @return writes new folders and empty data files to disk
 #' @export
 #'
-new_cleat_mark_datasheets <- function(date, experiment_ID, soil_IDs){
+new_cleat_mark_datasheets <- function(date, experiment_name, sample_names){
 
  new_dirs <- c(paste0("analysis/data/raw_data/cleat_mark_testing/", date),
                (paste0("analysis/data/raw_data/cleat_mark_testing/",
@@ -46,18 +46,18 @@ new_cleat_mark_datasheets <- function(date, experiment_ID, soil_IDs){
 
  # populate tibble
  drydown_tibble <- tibble::tibble(
-   experiment_ID = experiment_ID,
-   soil_ID = rep(rep(soil_IDs, each = 3), times=2),
-   cylinder_ID = rep(1:12, times=2),
-   date = date,
-   time_type = rep(c("lamp_on", "test_time"), each=12),
-   time = "",
-   AM_PM = "",
-   tin_tare_set = "",
-   tin_number = "",
-   tin_w_wet_sample= "",
-   tin_w_OD_sample = "",
-   comments = "-"
+    experiment_name = experiment_name,
+    date = date,
+    sample_name = rep(rep(sample_names, each = 3), times=2),
+    cylinder_ID = rep(1:12, times=2),
+    time_type = rep(c("lamp_on", "test_time"), each=12),
+    time = "",
+    AM_PM = "",
+    tin_tare_set = "",
+    tin_number = "",
+    tin_w_wet_sample= "",
+    tin_w_OD_sample = "",
+    comments = "-"
  )
 
  # write drydown file to disk
@@ -82,10 +82,11 @@ new_cleat_mark_datasheets <- function(date, experiment_ID, soil_IDs){
 
  # build tibble
 
- color_photos_tibble <- tibble::tibble(experiment_ID = experiment_ID,
-                                       date = date,
-                                       test_order = 1:12,
-                                       cylinder_ID = "")
+ color_photos_tibble <- tibble::tibble(
+    experiment_name = experiment_name,
+    date = date,
+    test_order = 1:12,
+    cylinder_ID = "")
 
  # write to disk
 
@@ -105,10 +106,10 @@ new_cleat_mark_datasheets <- function(date, experiment_ID, soil_IDs){
 
  # build tibble
 
- penetrometer_tibble <- tidyr::crossing(experiment_ID = experiment_ID,
+ penetrometer_tibble <- tidyr::crossing(experiment_name = experiment_name,
                                         date = date,
                                         cylinder_ID = c("01", "02", "03", "04", "05", "06", "07", "08","09", "10", "11", "12"),
-                                        replicate = 1:4,
+                                        replication = 1:4,
                                         penetrometer_reading = "")
 
  # write to disk

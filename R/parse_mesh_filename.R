@@ -14,7 +14,7 @@
 #'   joining other data frames. The pieces of information encoded in the file
 #'   names are (in order of appearance):
 #'
-#'   1. `experiment_ID`: A two-digit identifier or a character string
+#'   1. `experiment_name`: A two-digit identifier or a character string
 #'   corresponding to the particular set of mixes or task. 2. `soil_ID` 3-digit
 #'   number or other character string identifying the soil _within_ the
 #'   experiment 3. `date` Calendar date of the scan in POSIX format, i.e.
@@ -36,7 +36,7 @@ parse_mesh_filename <- function(x){
                                          pattern = "[.]ply$|_processed")) %>%
     tidyr::separate(
       col = .data$sans_extension,
-      into = c("experiment_ID", "soil_ID", "date", "cylinder_ID"),
+      into = c("experiment_name", "soil_ID", "date", "cylinder_ID"),
       sep = "_",
       convert = FALSE,
       remove = TRUE

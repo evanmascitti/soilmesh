@@ -29,6 +29,6 @@ w_cont_args <- list(x = test_time_water_content_data,
 mesh_water_contents <- pmap(w_cont_args, dplyr::left_join) %>%
   purrr::reduce(rbind) %>%
   soiltestr::add_w() %>%
-  dplyr::select(.data$experiment_ID, .data$soil_ID, .data$date, .data$cylinder_ID, .data$water_content, .data$comments)
+  dplyr::select(.data$experiment_name, .data$soil_ID, .data$date, .data$cylinder_ID, .data$water_content, .data$comments)
 
 mesh_water_contents

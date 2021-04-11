@@ -225,7 +225,7 @@ meshes_w_images <- metrics_plotting_data %>%
       "analysis/data/derived_data/cleat_mark_testing/",
       date,
       "/mesh_snapshots/",
-      experiment_ID,
+      experiment_name,
       "_",
       soil_ID,
       "_",

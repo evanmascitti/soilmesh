@@ -29,7 +29,7 @@ scan, and the additional information about the soil can be added via
 joining other data frames. The pieces of information encoded in the file
 names are (in order of appearance):
 \enumerate{
-\item \code{experiment_ID}: A two-digit identifier or a character string
+\item \code{experiment_name}: A two-digit identifier or a character string
 corresponding to the particular set of mixes or task. 2. \code{soil_ID} 3-digit
 number or other character string identifying the soil \emph{within} the
 experiment 3. \code{date} Calendar date of the scan in POSIX format, i.e.

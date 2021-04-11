@@ -243,7 +243,7 @@ batch_process_meshes <- function(date,
 
     # construct tibble
     hex_colors_tibble <- meshes %>%
-      dplyr::select(.data$experiment_ID, .data$soil_ID, .data$date, .data$cylinder_ID,
+      dplyr::select(.data$experiment_name, .data$soil_ID, .data$date, .data$cylinder_ID,
                     .data$hex_color)
 
     # check if file exists and stop if overwrite is not TRUE
@@ -325,7 +325,7 @@ batch_process_meshes <- function(date,
     # construct tibble of arguments to pass to mesh-snapshot in a pwalk call
 
     snapshot_args <- meshes %>%
-      dplyr::mutate(outfile = paste0(snapshot_dir, "/", .data$experiment_ID, "_", .data$soil_ID, "_", date, "_cyl", .data$cylinder_ID),
+      dplyr::mutate(outfile = paste0(snapshot_dir, "/", .data$experiment_name, "_", .data$soil_ID, "_", date, "_cyl", .data$cylinder_ID),
       asp1 = "4x3",
       asp2 = "16x9",
       wire = FALSE,
@@ -421,7 +421,7 @@ if(save_metrics){
 
   mesh_metrics_to_write <- mesh_metrics %>%
     dplyr::select(
-      .data$experiment_ID,
+      .data$experiment_name,
       .data$soil_ID,
       .data$date,
       .data$cylinder_ID,

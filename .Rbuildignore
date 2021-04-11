@@ -10,9 +10,3 @@
 ^development_notes$
 ^inst/rmarkdown/templates/cleatmark-daily-device-report/skeleton/code_to_fix_rgl_parameters.R$
 
-^\./ecmdata//raw-data/cleat-mark-testing/2021-04-11/cleatmark-backfill-data_2021-04-11\.csv$
-^\./ecmdata//raw-data/cleat-mark-testing/2021-04-11/color-photos/color-photos-index_2021-04-11\.csv$
-^\./ecmdata//raw-data/cleat-mark-testing/2021-04-11/drydown-data_2021-04-11\.csv$
-^\./ecmdata//raw-data/cleat-mark-testing/2021-04-11/mini-density-data_2021-04-11\.csv$
-^\./ecmdata//raw-data/cleat-mark-testing/2021-04-11/penetrometer-data_2021-04-11\.csv$
-^\./ecmdata$

@@ -17,7 +17,7 @@ cleat_mark_backfill_datasheet <- function(experiment_name, date, tin_tare_set,
     sand_cup_mass_after_backfilling = "")
 
   file_path <- here::here("ecmdata", "raw-data", "cleat-mark-testing",
-                          date, glue::glue("cleatmark-backfill-data_{date}.csv"))
+                          date, glue::glue("cleat-mark-backfill-data_{date}.csv"))
 
   readr::write_csv(x = cleatmark_backfill_tibble, file = file_path)
 

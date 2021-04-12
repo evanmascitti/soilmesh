@@ -29,7 +29,7 @@ df <- tibble::tibble(
   comments = ""
 )
 
-file_path <- here::here(dir, glue::glue("cleatmark-cyl-prep-QC_{date}.csv"))
+file_path <- here::here(dir, glue::glue("cleat-mark-cyl-prep-QC_{date}.csv"))
 
 if(file.exists(file_path)) {
   stop("File already exists; stopping call to prevent over-write")

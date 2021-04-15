@@ -14,11 +14,13 @@
 #' @param date data collection date ("YYYY-MM-DD")
 #' @param tin_tare_set unique ID for the set of tins used to measure water
 #'   content; see [asi468::tin_tares]
-#' @param bowl_tare_set unique ID for the set of tins used to measure water
-#'   content; see [asi468::tin_tares]
+#' @param bowl_tare_set unique ID for the set of stainless steel bowls used to measure water
+#'   content; see [asi468::stainless_bowl_tares]
 #' @param sand_loose_density Value for loose dry density of material used to
 #'   fill holes. Default value stored as [asi468::vrc_sand_loose_density], which
 #'   is 1.54.
+#' @param mini_density_reps number of replicate specimens extracted per cylinder
+#'   for the miniature sand-cone method
 #'
 #' @return Writes new folders and empty data files to disk.
 #' @export

@@ -1,11 +1,10 @@
 #' Populate empty data sheet for filling in cleats with sand
 #'
-#' @inheritParams mini_density_datasheet
+#' @inheritParams cleat_mark_datasheets
 #'
 #' @return writes file to disk
-#' @export
 #'
-cleat_mark_backfill_datasheet <- function(experiment_name, date, tin_tare_set,
+cleat_mark_backfill_datasheet <- function(experiment_name, date, tin_tare_set, bowl_tare_set,
                                      sand_loose_density = asi468::vrc_sand_loose_density){
 
   cleatmark_backfill_tibble <- tibble::tibble(

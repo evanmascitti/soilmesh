@@ -8,6 +8,7 @@ mini_density_datasheet(
   experiment_name,
   date,
   tin_tare_set,
+  n_reps = 1,
   sand_loose_density = asi468::vrc_sand_loose_density
 )
 }

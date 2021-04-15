@@ -1,17 +1,31 @@
 #' @title Create file structure and empty data sheets for cleat mark testing
 #'
 #' @description Creates 2 directories and 2 additional data sheets. Designed to
-#'   store penetrometer data, color photo indexes, and raw mesh files.
+#'   store penetrometer data, color photo indexes, and raw mesh files. A new
+#'   directory is created for the date of testing, and this holds all files
+#'   related to cleat-mark testing for that day. are created relative to root or
+#'   current working directory. The by-date directories should live under
+#'   `ecmdata/raw-data/cleat-mark-testing/` for a given project.
 #'
-#' @param experiment_name character string uniquely identifying this set of soils or mixtures
-#' @param sample_names character vector of the unique identifiers of the soils being
-#'   tested (length 4)
+#' @param experiment_name character string uniquely identifying this set of
+#'   soils or mixtures
+#' @param sample_names character vector of the unique identifiers of the soils
+#'   being tested (length 4)
 #' @param date data collection date ("YYYY-MM-DD")
+#' @param tin_tare_set unique ID for the set of tins used to measure water
+#'   content; see [asi468::tin_tares]
+#' @param bowl_tare_set unique ID for the set of tins used to measure water
+#'   content; see [asi468::tin_tares]
+#' @param sand_loose_density Value for loose dry density of material used to
+#'   fill holes. Default value stored as [asi468::vrc_sand_loose_density], which
+#'   is 1.54.
 #'
-#' @return writes new folders and empty data files to disk
+#' @return Writes new folders and empty data files to disk.
 #' @export
 #'
-cleat_mark_datasheets <- function( experiment_name, date, sample_names){
+cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_set,
+                                  bowl_tare_set, sand_loose_density = asi468::vrc_sand_loose_density,
+                                  mini_density_reps = 1){
 
 
 # build paths to three new directories: one for everything that will be
@@ -25,30 +39,26 @@ cleat_mark_datasheets <- function( experiment_name, date, sample_names){
      here::here("ecmdata/raw-data/cleat-mark-testing",
                                date, "raw-meshes"),
      here::here("ecmdata/raw-data/cleat-mark-testing",
-                date, "color-photos")
+                date, "color-photos"),
+     here::here("ecmdata/raw-data/cleat-mark-testing",
+                date, "other-data")
      )
 
- # check if directories already exist
+  # check if directories already exist
 
- if(sum(mapply(dir.exists, new_dirs)) > 0){
+ if(sum(purrr::map_lgl(new_dirs, dir.exists)) > 0){
    stop("\nOne or more of these directories already exist. Halting function call to prevent over-write.")
  }
 
  # create new directories to hold meshes and color images
- mapply(dir.create, new_dirs)
+ lapply(new_dirs, dir.create)
 
 
 #  write empty drydown data sheet -----------------------------------------
 
  # construct file path for writing
 
- drydown_path <- here::here("ecmdata/raw-data/cleat-mark-testing", date, glue::glue("drydown-data_{date}.csv"))
-
- # check if file is already present
-
- if(file.exists(drydown_path)){
-   stop("\nDrydown file already exists. Halting function call to prevent over-write.")
- }
+ drydown_path <- here::here("ecmdata/raw-data/cleat-mark-testing/other-data", date, glue::glue("drydown-data_{date}.csv"))
 
  # populate tibble
  drydown_tibble <- tibble::tibble(
@@ -83,12 +93,6 @@ cleat_mark_datasheets <- function( experiment_name, date, sample_names){
                                  "color-photos",
                                  glue::glue("color-photos-index_{date}.csv"))
 
- # check if file is already present
-
- if(file.exists(color_photos_path)){
-   stop("\nColor photos index file already exists. Halting function call to prevent over-write.")
- }
-
  # build tibble
 
  color_photos_tibble <- tibble::tibble(
@@ -105,16 +109,9 @@ cleat_mark_datasheets <- function( experiment_name, date, sample_names){
 
 # write empty penetrometer data sheet ------------------------------------------------------------
 
- penetrometer_path <- here::here("ecmdata/raw-data/cleat-mark-testing",
+ penetrometer_path <- here::here("ecmdata/raw-data/cleat-mark-testing/other-data",
                                  date,
                                  glue::glue("penetrometer-data_{date}.csv"))
-
-
- # check if file is already present
-
- if(file.exists(penetrometer_path)){
-    stop("\nColor photos index file already exists. Halting function call to prevent over-write.")
- }
 
  # build tibble
 
@@ -122,10 +119,66 @@ cleat_mark_datasheets <- function( experiment_name, date, sample_names){
                                         date = date,
                                         cylinder_ID = c("01", "02", "03", "04", "05", "06", "07", "08","09", "10", "11", "12"),
                                         replication = 1:4,
-                                        penetrometer_reading = "")
+                                        penetrometer_reading = "") %>%
+     dplyr::arrange(.data$cylinder_ID)
 
  # write to disk
 
  readr::write_csv(x = penetrometer_tibble, file = penetrometer_path)
  message(crayon::green('\nPlease verify that the `penetrometer_data` datasheet was correctly written to disk.'))
+
+
+# mini-density data -------------------------------------------------------
+
+ mini_density_tibble <- tidyr::crossing(
+     experiment_name = experiment_name,
+     date = date,
+     cylinder_ID = c("01", "02", "03", "04", "05", "06", "07", "08","09", "10", "11", "12"),
+     replication = 1:mini_density_reps,
+     sand_loose_density = sand_loose_density,
+     tin_tare_set = tin_tare_set,
+     tin_number = "",
+     sand_cup_mass_before_backfilling = "",
+     sand_cup_mass_after_backfilling = "",
+     tin_w_wet_sample= "",
+     tin_w_OD_sample= "") %>%
+     dplyr::arrange(.data$replication)
+
+ mini_density_path <- here::here("ecmdata", "raw-data", "cleat-mark-testing", "other-data", date,
+                        glue::glue("mini-density-data_{date}.csv"))
+
+ readr::write_csv(mini_density_tibble, mini_density_path)
+
+
+# cleat mark backfilling data sheet  --------------------------------------
+
+
+ cleatmark_backfill_tibble <- tibble::tibble(
+     experiment_name = experiment_name,
+     date = date,
+     cylinder_ID = c("01", "02", "03", "04", "05", "06", "07", "08","09", "10", "11", "12"),
+     sand_loose_density = sand_loose_density,
+     sand_cup_mass_before_backfilling = "",
+     sand_cup_mass_after_backfilling = "",
+     bowl_number = 1:12,
+     bowl_tare = "",
+     bowl_W_wet_sample = "",
+     bowl_w_OD_sample = "")
+
+ cleatmark_backfill_path <- here::here("ecmdata", "raw-data", "cleat-mark-testing",
+                         date, glue::glue("cleat-mark-backfill-data_{date}.csv"))
+
+ readr::write_csv(x = cleatmark_backfill_tibble, file = cleatmark_backfill_path)
+
+
+
+# message returned if writing succeeds ------------------------------------
+
+ written_files <- c(drydown_path, color_photos_path, penetrometer_path, mini_density_path, cleatmark_backfill_path)
+
+if(all(file.exists(written_files))){
+    message('Files written to disk:')
+    crayon::blue(paste0(written_files, collapse = '\n'))
+}
+
 }

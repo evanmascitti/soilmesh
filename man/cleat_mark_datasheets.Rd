@@ -4,20 +4,43 @@
 \alias{cleat_mark_datasheets}
 \title{Create file structure and empty data sheets for cleat mark testing}
 \usage{
-cleat_mark_datasheets(experiment_name, date, sample_names)
+cleat_mark_datasheets(
+  experiment_name,
+  sample_names,
+  date,
+  tin_tare_set,
+  bowl_tare_set,
+  sand_loose_density = asi468::vrc_sand_loose_density,
+  mini_density_reps = 1
+)
 }
 \arguments{
-\item{experiment_name}{character string uniquely identifying this set of soils or mixtures}
+\item{experiment_name}{character string uniquely identifying this set of
+soils or mixtures}
+
+\item{sample_names}{character vector of the unique identifiers of the soils
+being tested (length 4)}
 
 \item{date}{data collection date ("YYYY-MM-DD")}
 
-\item{sample_names}{character vector of the unique identifiers of the soils being
-tested (length 4)}
+\item{tin_tare_set}{unique ID for the set of tins used to measure water
+content; see \link[asi468:tin_tares]{asi468::tin_tares}}
+
+\item{bowl_tare_set}{unique ID for the set of tins used to measure water
+content; see \link[asi468:tin_tares]{asi468::tin_tares}}
+
+\item{sand_loose_density}{Value for loose dry density of material used to
+fill holes. Default value stored as \link[asi468:vrc_sand_loose_density]{asi468::vrc_sand_loose_density}, which
+is 1.54.}
 }
 \value{
-writes new folders and empty data files to disk
+Writes new folders and empty data files to disk.
 }
 \description{
 Creates 2 directories and 2 additional data sheets. Designed to
-store penetrometer data, color photo indexes, and raw mesh files.
+store penetrometer data, color photo indexes, and raw mesh files. A new
+directory is created for the date of testing, and this holds all files
+related to cleat-mark testing for that day. are created relative to root or
+current working directory. The by-date directories should live under
+\verb{ecmdata/raw-data/cleat-mark-testing/} for a given project.
 }

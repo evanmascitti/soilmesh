@@ -8,21 +8,25 @@ cleat_mark_backfill_datasheet(
   experiment_name,
   date,
   tin_tare_set,
+  bowl_tare_set,
   sand_loose_density = asi468::vrc_sand_loose_density
 )
 }
 \arguments{
-\item{experiment_name}{Character string identifying the experiment}
+\item{experiment_name}{character string uniquely identifying this set of
+soils or mixtures}
 
-\item{date}{Date of data collection (YYYY-MM-DD)}
+\item{date}{data collection date ("YYYY-MM-DD")}
 
-\item{tin_tare_set}{Character string identifying the date corresponding to
-the tin tares in \strong{asi468}}
+\item{tin_tare_set}{unique ID for the set of tins used to measure water
+content; see \link[asi468:tin_tares]{asi468::tin_tares}}
 
-\item{sand_loose_density}{Bulk density of sand used for sand-cone test,
-defaults to \code{asi468::vrc_sand_loose_density}, which is a data object stored
-in the asi468 package. Its value is 1.54, as was measured in Dec. 2020 for
-the topdressing sand obtained from Valentine research center.}
+\item{bowl_tare_set}{unique ID for the set of tins used to measure water
+content; see \link[asi468:tin_tares]{asi468::tin_tares}}
+
+\item{sand_loose_density}{Value for loose dry density of material used to
+fill holes. Default value stored as \link[asi468:vrc_sand_loose_density]{asi468::vrc_sand_loose_density}, which
+is 1.54.}
 }
 \value{
 writes file to disk

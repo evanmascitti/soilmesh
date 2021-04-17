@@ -1,0 +1,5 @@
+ecmdata/raw-data/cleat-mark-testing/2021-04-17/color-photos/color-photos-index_2021-04-17.csv
+ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data/cleat-mark-backfill-data_2021-04-17.csv
+ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data/drydown-data_2021-04-17.csv
+ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data/mini-density-data_2021-04-17.csv
+ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data/penetrometer-data_2021-04-17.csv

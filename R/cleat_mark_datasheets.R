@@ -26,14 +26,15 @@
 #' @param mini_density_tin_numbers Optional character vector corresponding (length 12) to specific tin tare numbers used for weighing soil in mini-density measurements
 #'
 #' @return Writes new folders and empty data files to disk.
+#'
 #' @export
 #'
 #' @importFrom rlang `%||%`
 #'
 cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_set = NULL,
-                                  bowl_tare_set = NULL, sand_loose_density = asi468::vrc_sand_loose_density,
-                                  mini_density_reps = 1, drydown_tin_numbers = NULL,
-                                  mini_density_tin_numbers = NULL){
+                                      bowl_tare_set = NULL, sand_loose_density = asi468::vrc_sand_loose_density,
+                                      mini_density_reps = 1, drydown_tin_numbers = NULL,
+                                      mini_density_tin_numbers = NULL){
 
 
   # substitute in the value for tin_tare_set and tin_numbers
@@ -45,43 +46,53 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
 
   mini_density_tin_numbers_vector <- mini_density_tin_numbers %||% ""
 
-  bowl_tare_set_label <- bowl_tare_set_label %||% ""
+  bowl_tare_set_label <- bowl_tare_set %||% ""
 
 
-# build paths to three new directories: one for everything that will be
-# collected today, and sub-directories under this one for the raw meshes and the
-# photos. The mesh files will be manually copied into this directory at the end
-# of the day, either with point-and-click or potentially using a helper function
-# which I haven't yet written.
-
- new_dirs <- c(
-     here::here("ecmdata/raw-data/cleat-mark-testing", date),
-     here::here("ecmdata/raw-data/cleat-mark-testing",
-                               date, "raw-meshes"),
-     here::here("ecmdata/raw-data/cleat-mark-testing",
-                date, "color-photos"),
-     here::here("ecmdata/raw-data/cleat-mark-testing",
-                date, "other-data")
-     )
-
-  # check if directories already exist
-
- if(sum(purrr::map_lgl(new_dirs, dir.exists)) > 0){
-   stop("\nOne or more of these directories already exist. Halting function call to prevent over-write.")
- }
-
- # create new directories to hold meshes and color images
- lapply(new_dirs, dir.create)
+  # build paths to three new directories: one for everything that will be
+  # collected today, and sub-directories under this one for the raw meshes and the
+  # photos. The mesh files will be manually copied into this directory at the end
+  # of the day, either with point-and-click or potentially using a helper function
+  # which I haven't yet written.
 
 
-#  write empty drydown data sheet -----------------------------------------
+  parent_dir <- here::here("ecmdata/raw-data/cleat-mark-testing", date)
 
- # construct file path for writing
+  sub_dirs <- paste(parent_dir, c("raw-meshes", "other-data", "color-photos"), sep = "/")
 
- drydown_path <- here::here("ecmdata/raw-data/cleat-mark-testing", date, glue::glue("other-data/drydown-data_{date}.csv"))
+  new_dirs <- c(parent_dir, sub_dirs)
 
- # populate tibble
- drydown_tibble <- tibble::tibble(
+
+  # check if directories already exist, but don't write them until later
+
+  if(any(dir.exists(paths = new_dirs))){
+    stop("The following directory(s) already exist: \n", cat(new_dirs[dir.exists(new_dirs)], fill = T), "\n",
+         "Halting function call to prevent over-write.", call. = T)
+  }
+
+  # construct file paths for writing and store in a list
+
+  other_paths <- ecmfuns::build_datasheet_path(base = here::here("ecmdata/raw-data/cleat-mark-testing", date, "other-data"),
+                                               stem = c('drydown-data', "cleat-mark-backfill-data", "mini-density-data", 'penetrometer-data'),
+                                               date = Sys.Date(),
+                                               ext = "csv")
+
+  photos_path <- ecmfuns::build_datasheet_path(base = here::here("ecmdata/raw-data/cleat-mark-testing", date, "color-photos"),
+                                               stem = c('color-photos-index'),
+                                               date = Sys.Date(),
+                                               ext = "csv")
+
+  files_to_write <- c(photos_path, other_paths)
+
+
+
+
+  # construct tibbles to write  ---------------------------------------------
+
+
+  # drydown tibble
+
+  drydown_data_tibble <- tibble::tibble(
     experiment_name = experiment_name,
     date = date,
     sample_name = rep(rep(sample_names, each = 3), times=2),
@@ -94,109 +105,100 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
     tin_w_wet_sample= "",
     tin_w_OD_sample = "",
     comments = "-"
- )
+  )
 
- # write drydown file to disk
- readr::write_csv(x = drydown_tibble, file = drydown_path)
- message(crayon::green('\nPlease verify that the `drydown` datasheet was correctly written to disk.'))
+  # color_photos index  ------------------------------------------------------------
 
 
-# write empty color_photos index data sheet ------------------------------------------------------------
+  # this empty file will keep track of the order of the images I shot on my phone;
+  # this way I don't need to know their file names/numbers and I can test
+  # the cylinders out of order if needed
 
-
- # create empty file to keep track of the order of images, this way I don't need to
- # know their file names/numbers and I can test the cylinders out of order if needed
- # construct file path
-
- color_photos_path <- here::here("ecmdata/raw-data/cleat-mark-testing",
-                                 date,
-                                 "color-photos",
-                                 glue::glue("color-photos-index_{date}.csv"))
-
- # build tibble
-
- color_photos_tibble <- tibble::tibble(
+  color_photos_index_tibble <- tibble::tibble(
     experiment_name = experiment_name,
     date = date,
     test_order = 1:12,
     cylinder_ID = "")
 
- # write to disk
+  # penetrometer data  ------------------------------------------------------------
 
- readr::write_csv(x = color_photos_tibble, file = color_photos_path)
- message(crayon::green('\nPlease verify that the `color_photos_index` datasheet was correctly written to disk.'))
+  penetrometer_data_tibble <- tidyr::crossing(
+    experiment_name = experiment_name,
+    date = date,
+    cylinder_ID = c(paste0(0, 1:9), 10:12),
+    replication = 1:4,
+    penetrometer_reading = ""
+  ) %>%
+    dplyr::arrange(.data$cylinder_ID)
 
+  # mini-density data -------------------------------------------------------
 
-# write empty penetrometer data sheet ------------------------------------------------------------
+  mini_density_data_tibble <- tidyr::crossing(
+    experiment_name = experiment_name,
+    date = date,
+    cylinder_ID = c(paste0(0, 1:9), 10:12),
+    replication = 1:mini_density_reps,
+    sand_loose_density = sand_loose_density,
+    tin_tare_set = tin_tare_label,
+    tin_number = mini_density_tin_numbers_vector,
+    sand_cup_mass_before_backfilling = "",
+    sand_cup_mass_after_backfilling = "",
+    tin_w_wet_sample= "",
+    tin_w_OD_sample= "") %>%
+    dplyr::arrange(.data$cylinder_ID, .data$replication)
 
- penetrometer_path <- here::here(glue::glue("ecmdata/raw-data/cleat-mark-testing/{date}/other-data/penetrometer-data_{date}.csv"))
+  # cleat mark backfilling data sheet  --------------------------------------
 
- # build tibble
+  cleat_mark_backfill_data_tibble <- tibble::tibble(
+    experiment_name = experiment_name,
+    date = date,
+    cylinder_ID = c(paste0(0, 1:9), 10:12),
+    sand_loose_density = sand_loose_density,
+    sand_cup_mass_before_backfilling = "",
+    sand_cup_mass_after_backfilling = "",
+    bowl_tare_set = bowl_tare_set_label,
+    bowl_number = 1:12,
+    bowl_w_wet_sample = "",
+    bowl_w_OD_sample = "")
 
- penetrometer_tibble <- tidyr::crossing(experiment_name = experiment_name,
-                                        date = date,
-                                        cylinder_ID = c("01", "02", "03", "04", "05", "06", "07", "08","09", "10", "11", "12"),
-                                        replication = 1:4,
-                                        penetrometer_reading = "") %>%
-     dplyr::arrange(.data$cylinder_ID)
-
- # write to disk
-
- readr::write_csv(x = penetrometer_tibble, file = penetrometer_path)
- message(crayon::green('\nPlease verify that the `penetrometer_data` datasheet was correctly written to disk.'))
-
-
-# mini-density data -------------------------------------------------------
-
- mini_density_tibble <- tidyr::crossing(
-     experiment_name = experiment_name,
-     date = date,
-     cylinder_ID = c("01", "02", "03", "04", "05", "06", "07", "08","09", "10", "11", "12"),
-     replication = 1:mini_density_reps,
-     sand_loose_density = sand_loose_density,
-     tin_tare_set = tin_tare_label,
-     tin_number = mini_density_tin_numbers_vector,
-     sand_cup_mass_before_backfilling = "",
-     sand_cup_mass_after_backfilling = "",
-     tin_w_wet_sample= "",
-     tin_w_OD_sample= "") %>%
-     dplyr::arrange(.data$replication)
-
- mini_density_path <- here::here("ecmdata", "raw-data", "cleat-mark-testing", date, "other-data",
-                        glue::glue("mini-density-data_{date}.csv"))
-
- readr::write_csv(mini_density_tibble, mini_density_path)
+  # compile objects and names before writing  -------------------------------
 
 
-# cleat mark backfilling data sheet  --------------------------------------
+  # construct list containing the data frames to write
+
+  data_sheets <- mget(ls(pattern = "tibble", sorted = T),
+                      mode = "list", inherits = F)
+
+  # put them together into a tibble containing
+  # the path to write anda list-column of corresponding data frames
+
+  args <- tibble::tibble(
+    x = data_sheets,
+    file = sort(files_to_write)
+  )
+
+  ##############
+  # browser()
+
+  # create new directories first
+  purrr::walk(new_dirs, dir.create)
+
+  # write the files to disk
+  purrr::pwalk(args, readr::write_csv)
 
 
- cleatmark_backfill_tibble <- tibble::tibble(
-     experiment_name = experiment_name,
-     date = date,
-     cylinder_ID = c("01", "02", "03", "04", "05", "06", "07", "08","09", "10", "11", "12"),
-     sand_loose_density = sand_loose_density,
-     sand_cup_mass_before_backfilling = "",
-     sand_cup_mass_after_backfilling = "",
-     bowl_number = 1:12,
-     bowl_tare_set = bowl_tare_set_label,
-     bowl_w_wet_sample = "",
-     bowl_w_OD_sample = "")
-
- cleatmark_backfill_path <- here::here("ecmdata", "raw-data", "cleat-mark-testing",
-                         date, "other-data", glue::glue("cleat-mark-backfill-data_{date}.csv"))
-
- readr::write_csv(x = cleatmark_backfill_tibble, file = cleatmark_backfill_path)
+  ##############
 
 
 
-# message returned if writing succeeds ------------------------------------
 
- written_files <- c(drydown_path, color_photos_path, penetrometer_path, mini_density_path, cleatmark_backfill_path)
+  # message returned if writing succeeds ------------------------------------
 
-if(all(file.exists(written_files))){
-    message('Files written to disk:')
-    crayon::blue(paste0(written_files, collapse = '\n'))
-}
+  if(all(file.exists(files_to_write))){
+    glue::glue("{length(files_to_write)} files were written to disk.")
+   # cat(files_to_write)
+  }
+
+
 
 }

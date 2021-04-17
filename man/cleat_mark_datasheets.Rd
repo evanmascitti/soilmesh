@@ -8,10 +8,12 @@ cleat_mark_datasheets(
   experiment_name,
   sample_names,
   date,
-  tin_tare_set,
-  bowl_tare_set,
+  tin_tare_set = NULL,
+  bowl_tare_set = NULL,
   sand_loose_density = asi468::vrc_sand_loose_density,
-  mini_density_reps = 1
+  mini_density_reps = 1,
+  drydown_tin_numbers = NULL,
+  mini_density_tin_numbers = NULL
 )
 }
 \arguments{
@@ -23,8 +25,7 @@ being tested (length 4)}
 
 \item{date}{data collection date ("YYYY-MM-DD")}
 
-\item{tin_tare_set}{unique ID for the set of tins used to measure water
-content; see \link[asi468:tin_tares]{asi468::tin_tares}}
+\item{tin_tare_set}{Optional character string (length 1) corresponding to set of tin tares used for weighing soil}
 
 \item{bowl_tare_set}{unique ID for the set of stainless steel bowls used to measure water
 content; see \link[asi468:stainless_bowl_tares]{asi468::stainless_bowl_tares}}
@@ -35,6 +36,9 @@ is 1.54.}
 
 \item{mini_density_reps}{number of replicate specimens extracted per cylinder
 for the miniature sand-cone method}
+
+\item{drydown_tin_numbers}{Optional character vector corresponding (length 24) to specific tin tare numbers used for weighing soil in drydown comparison
+#' @param drydown_tin_numbers Optional character vector corresponding (length 12) to specific tin tare numbers used for weighing soil in mini-density measurements}
 }
 \value{
 Writes new folders and empty data files to disk.

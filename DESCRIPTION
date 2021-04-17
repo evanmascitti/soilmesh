@@ -44,9 +44,11 @@ Suggests:
     ecmfuns,
     glue,
     molaR,
-    mesheR (>= 0.4.200213)
+    mesheR (>= 0.4.200213),
+    testthat (>= 3.0.0)
 Depends: 
     R (>= 2.10)
 RdMacros: lifecycle
 URL: https://github.com/evanmascitti/soilmesh
 BugReports: https://github.com/evanmascitti/soilmesh/issues
+Config/testthat/edition: 3

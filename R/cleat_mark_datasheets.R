@@ -21,13 +21,32 @@
 #'   is 1.54.
 #' @param mini_density_reps number of replicate specimens extracted per cylinder
 #'   for the miniature sand-cone method
+#' @param tin_tare_set Optional character string (length 1) corresponding to set of tin tares used for weighing soil
+#' @param drydown_tin_numbers Optional character vector corresponding (length 24) to specific tin tare numbers used for weighing soil in drydown comparison
+#' #' @param drydown_tin_numbers Optional character vector corresponding (length 12) to specific tin tare numbers used for weighing soil in mini-density measurements
+#'
 #'
 #' @return Writes new folders and empty data files to disk.
 #' @export
 #'
-cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_set,
-                                  bowl_tare_set, sand_loose_density = asi468::vrc_sand_loose_density,
-                                  mini_density_reps = 1){
+#' @importFrom rlang `%||%`
+#'
+cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_set = NULL,
+                                  bowl_tare_set = NULL, sand_loose_density = asi468::vrc_sand_loose_density,
+                                  mini_density_reps = 1, drydown_tin_numbers = NULL,
+                                  mini_density_tin_numbers = NULL){
+
+
+  # substitute in the value for tin_tare_set and tin_numbers
+  # if supplied by user; otherwise default to an empty string
+
+  tin_tare_label <- tin_tare_set %||% ""
+
+  drydown_tin_numbers_vector <- drydown_tin_numbers %||% ""
+
+  mini_density_tin_numbers_vector <- mini_density_tin_numbers %||% ""
+
+  bowl_tare_set_label <- bowl_tare_set_label %||% ""
 
 
 # build paths to three new directories: one for everything that will be
@@ -60,7 +79,7 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
 
  # construct file path for writing
 
- drydown_path <- here::here("ecmdata/raw-data/cleat-mark-testing/other-data", date, glue::glue("drydown-data_{date}.csv"))
+ drydown_path <- here::here("ecmdata/raw-data/cleat-mark-testing", date, glue::glue("other-data/drydown-data_{date}.csv"))
 
  # populate tibble
  drydown_tibble <- tibble::tibble(
@@ -71,8 +90,8 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
     time_type = rep(c("lamp_on", "test_time"), each=12),
     time = "",
     AM_PM = "",
-    tin_tare_set = "",
-    tin_number = "",
+    tin_tare_set = tin_tare_label,
+    tin_number = drydown_tin_numbers_vector,
     tin_w_wet_sample= "",
     tin_w_OD_sample = "",
     comments = "-"
@@ -111,9 +130,7 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
 
 # write empty penetrometer data sheet ------------------------------------------------------------
 
- penetrometer_path <- here::here("ecmdata/raw-data/cleat-mark-testing/other-data",
-                                 date,
-                                 glue::glue("penetrometer-data_{date}.csv"))
+ penetrometer_path <- here::here(glue::glue("ecmdata/raw-data/cleat-mark-testing/{date}/other-data/penetrometer-data_{date}.csv"))
 
  # build tibble
 
@@ -138,15 +155,15 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
      cylinder_ID = c("01", "02", "03", "04", "05", "06", "07", "08","09", "10", "11", "12"),
      replication = 1:mini_density_reps,
      sand_loose_density = sand_loose_density,
-     tin_tare_set = tin_tare_set,
-     tin_number = "",
+     tin_tare_set = tin_tare_label,
+     tin_number = mini_density_tin_numbers_vector,
      sand_cup_mass_before_backfilling = "",
      sand_cup_mass_after_backfilling = "",
      tin_w_wet_sample= "",
      tin_w_OD_sample= "") %>%
      dplyr::arrange(.data$replication)
 
- mini_density_path <- here::here("ecmdata", "raw-data", "cleat-mark-testing", "other-data", date,
+ mini_density_path <- here::here("ecmdata", "raw-data", "cleat-mark-testing", date, "other-data",
                         glue::glue("mini-density-data_{date}.csv"))
 
  readr::write_csv(mini_density_tibble, mini_density_path)
@@ -163,12 +180,12 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
      sand_cup_mass_before_backfilling = "",
      sand_cup_mass_after_backfilling = "",
      bowl_number = 1:12,
-     bowl_tare = "",
-     bowl_W_wet_sample = "",
+     bowl_tare_set = bowl_tare_set_label,
+     bowl_w_wet_sample = "",
      bowl_w_OD_sample = "")
 
  cleatmark_backfill_path <- here::here("ecmdata", "raw-data", "cleat-mark-testing",
-                         date, glue::glue("cleat-mark-backfill-data_{date}.csv"))
+                         date, "other-data", glue::glue("cleat-mark-backfill-data_{date}.csv"))
 
  readr::write_csv(x = cleatmark_backfill_tibble, file = cleatmark_backfill_path)
 

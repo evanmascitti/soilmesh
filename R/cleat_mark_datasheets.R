@@ -23,8 +23,7 @@
 #'   for the miniature sand-cone method
 #' @param tin_tare_set Optional character string (length 1) corresponding to set of tin tares used for weighing soil
 #' @param drydown_tin_numbers Optional character vector corresponding (length 24) to specific tin tare numbers used for weighing soil in drydown comparison
-#' #' @param drydown_tin_numbers Optional character vector corresponding (length 12) to specific tin tare numbers used for weighing soil in mini-density measurements
-#'
+#' @param mini_density_tin_numbers Optional character vector corresponding (length 12) to specific tin tare numbers used for weighing soil in mini-density measurements
 #'
 #' @return Writes new folders and empty data files to disk.
 #' @export

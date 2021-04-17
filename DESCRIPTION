@@ -30,7 +30,8 @@ Imports:
     cowplot,
     lubridate,
     soiltestr,
-    lifecycle
+    lifecycle,
+    ecmfuns
 Suggests: 
     colorblindr,
     circular,
@@ -41,7 +42,6 @@ Suggests:
     rmarkdown,
     scales,
     imager,
-    ecmfuns,
     glue,
     molaR,
     mesheR (>= 0.4.200213),

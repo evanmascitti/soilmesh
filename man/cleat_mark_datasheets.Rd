@@ -37,8 +37,9 @@ is 1.54.}
 \item{mini_density_reps}{number of replicate specimens extracted per cylinder
 for the miniature sand-cone method}
 
-\item{drydown_tin_numbers}{Optional character vector corresponding (length 24) to specific tin tare numbers used for weighing soil in drydown comparison
-#' @param drydown_tin_numbers Optional character vector corresponding (length 12) to specific tin tare numbers used for weighing soil in mini-density measurements}
+\item{drydown_tin_numbers}{Optional character vector corresponding (length 24) to specific tin tare numbers used for weighing soil in drydown comparison}
+
+\item{mini_density_tin_numbers}{Optional character vector corresponding (length 12) to specific tin tare numbers used for weighing soil in mini-density measurements}
 }
 \value{
 Writes new folders and empty data files to disk.

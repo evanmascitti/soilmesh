@@ -74,20 +74,15 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
 
   other_paths <- ecmfuns::build_datasheet_path(base = here::here("ecmdata/raw-data/cleat-mark-testing", date, "other-data"),
                                                stem = c('drydown-data', "cleat-mark-backfill-data", "mini-density-data", 'penetrometer-data'),
-                                               date = Sys.Date(),
+                                               date = date,
                                                ext = "csv")
 
   photos_path <- ecmfuns::build_datasheet_path(base = here::here("ecmdata/raw-data/cleat-mark-testing", date, "color-photos"),
                                                stem = c('color-photos-index'),
-                                               date = Sys.Date(),
+                                               date = date,
                                                ext = "csv")
 
-  files_to_write <- c(photos_path, other_paths)
-
-
-
-
-  # construct tibbles to write  ---------------------------------------------
+# construct tibbles to write  ---------------------------------------------
 
 
   # drydown tibble
@@ -164,38 +159,64 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
   # compile objects and names before writing  -------------------------------
 
 
-  # construct list containing the data frames to write
+  # Since they are in different sub-directories, I can't use `sort`
+  # to order the names of the tibbles and also the file paths.
 
-  data_sheets <- mget(ls(pattern = "tibble", sorted = T),
+  # Therefore the actions below are done once for each directory.
+  # In this case it is only a few actions, each copy-pasted once so it's OK.
+
+  # construct lists containing the data frames to write
+
+  other_data_sheets <- mget(ls(pattern = "data_tibble", sorted = T),
                       mode = "list", inherits = F)
 
-  # put them together into a tibble containing
-  # the path to write anda list-column of corresponding data frames
+  color_photos_index_sheet <- mget(ls(pattern = "color_photos_index_tibble", sorted = T),
+                            mode = "list", inherits = F)
 
-  args <- tibble::tibble(
-    x = data_sheets,
-    file = sort(files_to_write)
+
+
+  # put them together into a tibble containing
+  # the path to write and a list-column of corresponding data frames
+
+  other_args <- tibble::tibble(
+    x = other_data_sheets,
+    file = sort(other_paths)
   )
 
+  # Since this is only one sheet it could technically be done
+  # with a single call to `readr::write_csv` but for consistency
+  # I will still make it into a named list and call `pwalk()`as above
+
+  color_photos_args <- tibble::tibble(
+    x = color_photos_index_sheet,
+    file = sort(photos_path)
+  )
+
+
+
+
   ##############
-  # browser()
+
 
   # create new directories first
   purrr::walk(new_dirs, dir.create)
 
   # write the files to disk
-  purrr::pwalk(args, readr::write_csv)
+  purrr::pwalk(other_args, readr::write_csv)
+  purrr::pwalk(color_photos_args, readr::write_csv)
 
 
   ##############
 
 
 
-
+  browser()
   # message returned if writing succeeds ------------------------------------
 
-  if(all(file.exists(files_to_write))){
-    glue::glue("{length(files_to_write)} files were written to disk.")
+  n_files <- sum(purrr::map_dbl(c(other_paths, photos_path), length))
+
+  if(all(file.exists(other_paths, photos_path))){
+    glue::glue("{n_files} files were written to disk.")
    # cat(files_to_write)
   }
 

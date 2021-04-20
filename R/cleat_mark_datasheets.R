@@ -66,7 +66,7 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
   # check if directories already exist, but don't write them until later
 
   if(any(dir.exists(paths = new_dirs))){
-    stop("The following directory(s) already exist: \n", cat(new_dirs[dir.exists(new_dirs)], fill = T), "\n",
+    stop("The following directory(s) already exist: \n\n", cat(new_dirs[dir.exists(new_dirs)], fill = T), "\n\n",
          "Halting function call to prevent over-write.", call. = T)
   }
 
@@ -210,15 +210,14 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
 
 
 
-  browser()
+ #  browser()
   # message returned if writing succeeds ------------------------------------
 
   n_files <- sum(purrr::map_dbl(c(other_paths, photos_path), length))
 
   if(all(file.exists(other_paths, photos_path))){
-    glue::glue("{n_files} files were written to disk.")
-   # cat(files_to_write)
-  }
+    message(crayon::green(n_files, " files were written to disk."))
+   }
 
 
 

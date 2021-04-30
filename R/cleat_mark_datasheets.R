@@ -40,13 +40,13 @@ cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_
   # substitute in the value for tin_tare_set and tin_numbers
   # if supplied by user; otherwise default to an empty string
 
-  tin_tare_label <- tin_tare_set %||% ""
+  tin_tare_label <- tin_tare_set %||% " "
 
-  drydown_tin_numbers_vector <- drydown_tin_numbers %||% ""
+  drydown_tin_numbers_vector <- drydown_tin_numbers %||% " "
 
-  mini_density_tin_numbers_vector <- mini_density_tin_numbers %||% ""
+  mini_density_tin_numbers_vector <- mini_density_tin_numbers %||% " "
 
-  bowl_tare_set_label <- bowl_tare_set %||% ""
+  bowl_tare_set_label <- bowl_tare_set %||% " "
 
 
   # build paths to three new directories: one for everything that will be

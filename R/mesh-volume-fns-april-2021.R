@@ -1,3 +1,5 @@
+utils::globalVariables('ref_circ')
+
 #' \lifecycle{experimental}
 #'
 #' @title Calculate soil volume above a reference plane
@@ -7,7 +9,9 @@
 #' @param mesh triangular mesh of class "mesh3d"
 #' @param z_displ_mm vertical offset to prevent removal of vertices near the origin
 #' @param direction one of "above" or "below"
-#'
+#' @param include_ref whether the returned mesh object should include the
+#'   reference circle plane? Default is `FALSE which` returns only the points
+#'   retained after slicing.
 #' @return list containing a numeric vector of length 1 (cm3 of soil
 #'   residing above the reference plane) and the resulting mesh from the slicing operation
 #'
@@ -21,10 +25,11 @@
 #'   faces, then remove unreferenced vertices, and (finally) remove non-manifold
 #'   vertices before coherently orienting the faces. This approach seems to resolve the non-manifoldness of the meshes
 #'   induced by downsampling, cylinder removal, and top/bottom removal.
-#' @seealso [`vol_below()`]
-
+#' @export
+#' @seealso [`vol_below()`], [`vol_above()`], [`vol_diff()`]
+#'
 #########
-vol_one_side <-function(mesh, direction, z_displ_mm = 0.01){
+vol_slice <-function(mesh, direction, z_displ_mm = 0.01, include_ref = FALSE){
 
   # slice the mesh along the x-y plane and keep only what's above OR below
   # as determined by the direction argument
@@ -85,7 +90,17 @@ vol_one_side <-function(mesh, direction, z_displ_mm = 0.01){
 
   vol_diff_cm3 <- vol_value_mm3*0.001 - ((z_displ_mm*0.1)*186.2348)
 
-  return(list(vol_diff_cm3 = vol_diff_cm3, sliced_mesh = newmesh))
+  # browser()
+
+  if(!include_ref) {
+    return_mesh <- sliced_mesh
+  } else {
+    return_mesh <- newmesh
+    }
+
+  return(list(vol_diff_cm3 = vol_diff_cm3,
+              sliced_mesh = return_mesh)
+  )
 
 }
 
@@ -93,23 +108,23 @@ vol_one_side <-function(mesh, direction, z_displ_mm = 0.01){
 
 #' Mesh volume above datum
 #'
-#' @inheritParams vol_one_side
+#' @inheritParams vol_slice
 #'
 #' @export
 vol_above <- function(mesh, z_displ_mm = 0.01){
 
- vol_one_side(mesh = mesh, direction = "above", z_displ_mm = z_displ_mm)
+ vol_slice(mesh = mesh, direction = "above", z_displ_mm = z_displ_mm)
 
 }
 
 #' Mesh volume below datum
 #'
-#' @inheritParams vol_one_side
+#' @inheritParams vol_slice
 #'
 #' @export
 vol_below <- function(mesh, z_displ_mm = 0.01){
 
-  vol_one_side(mesh = mesh, direction = "below", z_displ_mm = z_displ_mm)
+  vol_slice(mesh = mesh, direction = "below", z_displ_mm = z_displ_mm)
 
 }
 
@@ -122,14 +137,18 @@ vol_below <- function(mesh, z_displ_mm = 0.01){
 #' @return named list of length 3
 #' @export
 #'
-#' @inheritParams vol_one_side
+#' @inheritParams vol_slice
 vol_diff <- function(mesh, z_displ_mm = 0.01) {
 
-  remeshed_vol_above <- vol_above(mesh)
-  remeshed_vol_below <- vol_below(mesh)
+  remeshed_vol_above <- vol_above(mesh)$vol_diff_cm3
+  remeshed_vol_below <- vol_below(mesh)$vol_diff_cm3
   remeshed_vol_total <- sum(remeshed_vol_below, remeshed_vol_above)
 
-  return_list <- mget(ls(envir = rlang::current_env()))
+  return_list <- mget(x = c('remeshed_vol_above',
+                            'remeshed_vol_below',
+                            'remeshed_vol_total'),
+                      envir = rlang::current_env(),
+                      inherits = F)
 
   return(return_list)
 

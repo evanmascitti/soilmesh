@@ -112,3 +112,25 @@ vol_below <- function(mesh, z_displ_mm = 0.01){
   vol_one_side(mesh = mesh, direction = "below", z_displ_mm = z_displ_mm)
 
 }
+
+
+#' Calculate above, below, and summation of these
+#'
+#' Returns a list with each named element being a numeric vector
+#' of length 1
+#'
+#' @return named list of length 3
+#' @export
+#'
+#' @inheritParams vol_one_side
+vol_diff <- function(mesh, z_displ_mm = 0.01) {
+
+  remeshed_vol_above <- vol_above(mesh)
+  remeshed_vol_below <- vol_below(mesh)
+  remeshed_vol_total <- sum(remeshed_vol_below, remeshed_vol_above)
+
+  return_list <- mget(ls(envir = rlang::current_env()))
+
+  return(return_list)
+
+}

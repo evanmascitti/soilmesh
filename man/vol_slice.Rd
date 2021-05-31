@@ -39,5 +39,5 @@ vertices before coherently orienting the faces. This approach seems to resolve t
 induced by downsampling, cylinder removal, and top/bottom removal.
 }
 \seealso{
-\code{\link[=vol_below]{vol_below()}}, \code{\link[=vol_above]{vol_above()}}, \code{\link[=vol_diff]{vol_diff()}}
+\code{\link[=vol_gridded]{vol_gridded()}}, \code{\link[=vol_faceweighted]{vol_faceweighted()}}, \code{\link[=vol_pointwise]{vol_pointwise()}}
 }

@@ -9,7 +9,7 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2021--02--23-yellowgreen.svg)](/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--05--31-yellowgreen.svg)](/commits/master)
 <!-- badges: end -->
 
 This package houses the functions I use for processing 3D meshes in ASI
@@ -21,9 +21,8 @@ other R packages and is done entirely with code. This ensures complete
 reproducibility of my analyses and eliminates possible human errors,
 which are hard to detect and trace.
 
-This package has been kept separate from the functions in
-**soiltestr** because the mesh processing methods are very specific to
-my project, and it is not likely anyone else would need to use the
-functions residing in **soilmesh**. I do plan to publish **soiltestr**
-on CRAN (with a better name), so I want to be a good curator of that
-package and keep my niche stuff out of it.
+This package has been kept separate from the functions in **soiltestr**
+because the mesh processing methods are very specific to my project, and
+it is not likely anyone else would need to use the functions residing in
+**soilmesh**. I do plan to publish **soiltestr** on CRAN, so I want to
+be a good curator of that package and keep my niche stuff out of it.

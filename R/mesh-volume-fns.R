@@ -45,7 +45,7 @@ utils::globalVariables('ref_circ')
 #'   vertices before coherently orienting the faces. This approach seems to resolve the non-manifoldness of the meshes
 #'   induced by downsampling, cylinder removal, and top/bottom removal.
 #' @export
-#' @seealso [`vol_below()`], [`vol_above()`], [`vol_diff()`]
+#' @seealso [`vol_gridded()`], [`vol_faceweighted()`], [`vol_pointwise()`]
 #'
 vol_slice <-function(mesh, direction, z_displ_mm = 0.01, include_ref = FALSE){
 
@@ -71,13 +71,13 @@ vol_slice <-function(mesh, direction, z_displ_mm = 0.01, include_ref = FALSE){
   }
 
 
-  cap <- soilmesh::ref_circ
+  cap <- ref_circ
 
   if(direction == "below"){
     cap <- Morpho::invertFaces(cap)
   }
 
-  cap <- rgl::translate3d(obj = soilmesh::ref_circ,
+  cap <- rgl::translate3d(obj = ref_circ,
                           x= 0,
                           y= 0,
                           z= dplyr::if_else(
@@ -205,7 +205,7 @@ vol_remeshed <- function(mesh, z_displ_mm = 0.01) {
 #'
 vol_gridded <- function(mesh){
 
-  md_obj <- Morpho::meshDist(x = soilmesh::ref_circ,
+  md_obj <- Morpho::meshDist(x = ref_circ,
                              mesh2 = mesh,
                              plot = F)
 
@@ -331,7 +331,7 @@ vol_faceweighted <- function(mesh, radius = 7) {
   # to which mesh)
 
   mdobj <- Morpho::meshDist(x = mesh,
-                            mesh2 = soilmesh::ref_circ,
+                            mesh2 = ref_circ,
                             rampcolors = c("red", "white", "blue"),
                             plot = FALSE)
 

@@ -7,13 +7,9 @@ test_that("volume functions return values, not errors", {
 meshes <- map(meshpaths, Rvcg::vcgImport) %>%
     tibble::enframe(name = "mesh_number", value = "mesh_object")
 
-vol_above_mesh1 <- suppressWarnings(
-    {vol_slice_above(meshes[1, ]$mesh_object[[1]])
-    })
+vol_above_mesh1 <- suppressWarnings({vol_slice_above(meshes$mesh_object[[1]])})
 
-vol_below_mesh1 <- suppressWarnings({
-    vol_slice_below(meshes[1, ]$mesh_object[[1]])
-  })
+vol_below_mesh1 <- suppressWarnings({vol_slice_below(meshes$mesh_object[[1]])})
 
 
   # functions should return positive numeric

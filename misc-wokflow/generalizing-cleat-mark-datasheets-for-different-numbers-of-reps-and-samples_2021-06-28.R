@@ -14,6 +14,11 @@
 #' @param date data collection date ("YYYY-MM-DD")
 #' @param tin_tare_set unique ID for the set of tins used to measure water
 #'   content; see [asi468::tin_tares]
+#' @param bowl_tare_set unique ID for the set of stainless steel bowls used to measure water
+#'   content; see [asi468::stainless_bowl_tares]
+#' @param sand_loose_density Value for loose dry density of material used to
+#'   fill holes. Default value stored as [asi468::vrc_sand_loose_density], which
+#'   is 1.54.
 #' @param mini_density_reps number of replicate specimens extracted per cylinder
 #'   for the miniature sand-cone method
 #' @param tin_tare_set Optional character string (length 1) corresponding to set of tin tares used for weighing soil
@@ -26,16 +31,10 @@
 #'
 #' @importFrom rlang `%||%`
 #'
-cleat_mark_datasheets <- function(
-  experiment_name,
-  sample_names,
-  date,
-  tin_tare_set = NULL,
-  bowl_tare_set = NULL,
-  sand_loose_density = asi468::vrc_sand_loose_density,
-  mini_density_reps = 1,
-  drydown_tin_numbers = NULL,
-  mini_density_tin_numbers = NULL) {
+cleat_mark_datasheets <- function(experiment_name, sample_names, date, tin_tare_set = NULL,
+                                  bowl_tare_set = NULL, sand_loose_density = asi468::vrc_sand_loose_density,
+                                  mini_density_reps = 1, drydown_tin_numbers = NULL,
+                                  mini_density_tin_numbers = NULL){
 
   # browser()
 
@@ -61,7 +60,7 @@ cleat_mark_datasheets <- function(
 
   parent_dir <- here::here("ecmdata/raw-data/cleat-mark-testing", date)
 
-  sub_dirs <- paste(parent_dir, c("other-data", "color-photos"), sep = "/")
+  sub_dirs <- paste(parent_dir, c("raw-meshes", "other-data", "color-photos"), sep = "/")
 
   new_dirs <- c(parent_dir, sub_dirs)
 
@@ -76,7 +75,7 @@ cleat_mark_datasheets <- function(
   # construct file paths for writing and store in a list
 
   other_paths <- ecmfuns::build_datasheet_path(base = here::here("ecmdata/raw-data/cleat-mark-testing", date, "other-data"),
-                                               stem = c('drydown-data', "mini-density-data", 'penetrometer-data'),
+                                               stem = c('drydown-data', "cleat-mark-backfill-data", "mini-density-data", 'penetrometer-data'),
                                                date = date,
                                                ext = "csv")
 
@@ -85,7 +84,7 @@ cleat_mark_datasheets <- function(
                                                date = date,
                                                ext = "csv")
 
-# construct tibbles to write  ---------------------------------------------
+  # construct tibbles to write  ---------------------------------------------
 
 
   # drydown tibble
@@ -93,9 +92,21 @@ cleat_mark_datasheets <- function(
   drydown_data_tibble <- tibble::tibble(
     experiment_name = experiment_name,
     date = date,
-    sample_name = rep(rep(sample_names, each = 3), times=2),
-    cylinder_ID = rep(c(paste0(0, 1:9), 10:12), times=2),
-    time_type = rep(c("lamp_on", "test_time"), each=12),
+    sample_name = dplyr::if_else(
+      condition =  length(sample_names)  == 4L,
+      true = rep(rep(sample_names, each = 3), times=2),
+      false = sample_names
+    ),
+    cylinder_ID = dplyr::if_else(
+      length(sample_names)  == 4L,
+      true = rep(c(paste0(0, 1:9), 10:12), times=2),
+      false = paste0(0, 1:length(sample_names))
+    ),
+    time_type = rep(c("lamp_on", "test_time"),
+                    each= dplyr::if_else(
+                      condition = length(sample_names) ==4L,
+                      true = 12,
+                      false = length(sample_names))),
     time = "",
     AM_PM = "",
     tin_tare_set = tin_tare_label,
@@ -115,7 +126,7 @@ cleat_mark_datasheets <- function(
   color_photos_index_tibble <- tibble::tibble(
     experiment_name = experiment_name,
     date = date,
-    test_order = 1:12,
+    test_order = length(sample_names),
     cylinder_ID = "")
 
   # penetrometer data  ------------------------------------------------------------
@@ -131,17 +142,33 @@ cleat_mark_datasheets <- function(
 
   # mini-density data -------------------------------------------------------
 
-  mini_density_data_tibble <- tibble::tibble(
+  mini_density_data_tibble <- tidyr::crossing(
     experiment_name = experiment_name,
     date = date,
     cylinder_ID = c(paste0(0, 1:9), 10:12),
     replication = 1:mini_density_reps,
+    sand_loose_density = sand_loose_density,
     tin_tare_set = tin_tare_label,
     tin_number = mini_density_tin_numbers_vector,
-    tin_w_wet_sample = "",
-    tin_w_OD_sample = "") %>%
+    sand_cup_mass_before_backfilling = "",
+    sand_cup_mass_after_backfilling = "",
+    tin_w_wet_sample= "",
+    tin_w_OD_sample= "") %>%
     dplyr::arrange(.data$cylinder_ID, .data$replication)
 
+  # cleat mark backfilling data sheet  --------------------------------------
+
+  cleat_mark_backfill_data_tibble <- tibble::tibble(
+    experiment_name = experiment_name,
+    date = date,
+    cylinder_ID = c(paste0(0, 1:9), 10:12),
+    sand_loose_density = sand_loose_density,
+    sand_cup_mass_before_backfilling = "",
+    sand_cup_mass_after_backfilling = "",
+    bowl_tare_set = bowl_tare_set_label,
+    bowl_number = 1:12,
+    bowl_w_wet_sample = "",
+    bowl_w_OD_sample = "")
 
   # compile objects and names before writing  -------------------------------
 
@@ -155,10 +182,10 @@ cleat_mark_datasheets <- function(
   # construct lists containing the data frames to write
 
   other_data_sheets <- mget(ls(pattern = "data_tibble", sorted = T),
-                      mode = "list", inherits = F)
+                            mode = "list", inherits = F)
 
   color_photos_index_sheet <- mget(ls(pattern = "color_photos_index_tibble", sorted = T),
-                            mode = "list", inherits = F)
+                                   mode = "list", inherits = F)
 
 
 
@@ -197,14 +224,14 @@ cleat_mark_datasheets <- function(
 
 
 
- #  browser()
+  #  browser()
   # message returned if writing succeeds ------------------------------------
 
   n_files <- sum(purrr::map_dbl(c(other_paths, photos_path), length))
 
   if(all(file.exists(other_paths, photos_path))){
     message(crayon::green(n_files, " files were written to disk."))
-   }
+  }
 
 
 

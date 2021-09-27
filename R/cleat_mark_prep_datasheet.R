@@ -20,8 +20,9 @@ df <- tibble::tibble(
   date = date,
   experiment_name = "",
   sample_name	="",
+  water_temp_c = "",
   cylinder_ID	= c(paste0(0, 1:9), 10:12),
-  filled_cylinder_mass_g = "",
+  filled_cylinder_g = "",
   tin_tare_set = tin_tare_set,
   tin_number = "",
   tin_w_wet_sample = "",
@@ -38,7 +39,8 @@ if(file.exists(file_path)) {
 }
 
 if(file.exists(file_path)){
-  crayon::green(glue::glue("Success! Wrote {file_path} to disk."))
-}
+  message(crayon::green("Success! Wrote `", file_path, "` to disk."))
+
+  }
 
 }

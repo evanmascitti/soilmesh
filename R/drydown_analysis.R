@@ -190,12 +190,10 @@ drydown_analysis <- function(path){
       )
 
     # assign a new class called `soilmesh_drydown` to this object;
-    # I may create specific methods which opertae on this class
+    # I may create specific methods which operate on this class
     # at a later date. Just learning to use the S3 system.
 
-    class(return_val) <- "soilmesh_drydown"
-
-  return(return_val)
+    return(structure(return_val, class = "soilmesh_drydown"))
 
     }
 

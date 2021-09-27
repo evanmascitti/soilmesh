@@ -24,8 +24,6 @@ test_that("file structure is correct", {
     sample_names = paste0('mix', 1:4),
     date = '2021-04-17',
     tin_tare_set = '2021-03-04',
-    bowl_tare_set = '2021-04-10',
-    sand_loose_density = 1.54,
     mini_density_reps = 1,
     drydown_tin_numbers = 1:24,
     mini_density_tin_numbers = 25:36
@@ -35,15 +33,27 @@ test_that("file structure is correct", {
 # check if the files were created correctly
 
  expect_identical(
-    file.exists(c(
-     here::here("ecmdata/raw-data/cleat-mark-testing/2021-04-17/color-photos", "color-photos-index_2021-04-17.csv"),
-      here::here("ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data", "cleat-mark-backfill-data_2021-04-17.csv"),
-      here::here("ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data", "drydown-data_2021-04-17.csv"),
-      here::here("ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data", "mini-density-data_2021-04-17.csv"),
-      here::here("ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data", "penetrometer-data_2021-04-17.csv")
-    )),
-    rep(TRUE, 5)
-    )
+    file.exists(
+      c(
+        here::here(
+          "ecmdata/raw-data/cleat-mark-testing/2021-04-17/color-photos",
+          "color-photos-index_2021-04-17.csv"
+        ),
+        here::here(
+          "ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data",
+          "drydown-data_2021-04-17.csv"
+        ),
+        here::here(
+          "ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data",
+          "mini-density-data_2021-04-17.csv"
+        ),
+        here::here(
+          "ecmdata/raw-data/cleat-mark-testing/2021-04-17/other-data",
+          "penetrometer-data_2021-04-17.csv"
+        )
+      )),
+    rep(TRUE, 4)
+ )
 
 })
 

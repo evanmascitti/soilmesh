@@ -27,13 +27,6 @@ being tested (length 4)}
 
 \item{tin_tare_set}{Optional character string (length 1) corresponding to set of tin tares used for weighing soil}
 
-\item{bowl_tare_set}{unique ID for the set of stainless steel bowls used to measure water
-content; see \link[asi468:stainless_bowl_tares]{asi468::stainless_bowl_tares}}
-
-\item{sand_loose_density}{Value for loose dry density of material used to
-fill holes. Default value stored as \link[asi468:vrc_sand_loose_density]{asi468::vrc_sand_loose_density}, which
-is 1.54.}
-
 \item{mini_density_reps}{number of replicate specimens extracted per cylinder
 for the miniature sand-cone method}
 
